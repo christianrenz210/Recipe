@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - RecipeShare</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <style>
+        .dash-body { background: #f8f9fa; }
+        .dash-nav {
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+        .dash-nav .brand { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
+        .dash-nav .brand span { color: var(--secondary); }
+        .dash-nav .nav-icons a {
+            color: var(--gray);
+            font-size: 1.2rem;
+            margin-left: 18px;
+            position: relative;
+            transition: var(--transition);
+        }
+        .dash-nav .nav-icons a:hover { color: var(--primary); }
+        .dash-nav .nav-icons .badge {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            font-size: 0.55rem;
+            background: var(--primary);
+        }
+        .dash-nav .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: 20px;
+            cursor: pointer;
+        }
+        .dash-nav .user-profile img {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .dash-nav .user-profile strong { font-size: 0.9rem; }
+        .dash-nav .user-profile small { color: var(--gray); font-size: 0.75rem; }
+
+        .dash-content { padding: 30px 0; }
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .welcome-card h3 { font-weight: 700; }
+        .welcome-card p { opacity: 0.9; margin: 0; }
+        .welcome-card .btn-light-custom {
+            background: rgba(255,255,255,0.2);
+            color: var(--white);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .welcome-card .btn-light-custom:hover { background: rgba(255,255,255,0.3); }
+
+        .feed-card {
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        .feed-card:hover { box-shadow: var(--shadow); }
+        .feed-card .feed-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+        .feed-card .feed-body { padding: 20px; }
+        .feed-card .feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .feed-card .feed-header .author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .feed-card .feed-header .author img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .feed-card .feed-header .author strong { font-size: 0.95rem; display: block; }
+        .feed-card .feed-header .author small { color: var(--gray); font-size: 0.8rem; }
+        .feed-card .feed-header .category-badge {
+            background: var(--light-bg);
+            color: var(--primary);
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .feed-card .feed-body h5 { font-weight: 700; margin-bottom: 8px; }
+        .feed-card .feed-body p { color: var(--gray); font-size: 0.9rem; margin-bottom: 12px; }
+        .feed-card .feed-actions {
+            display: flex;
+            gap: 20px;
+            padding: 12px 20px;
+            border-top: 1px solid var(--light-gray);
+            font-size: 0.9rem;
+        }
+        .feed-card .feed-actions a {
+            color: var(--gray);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .feed-card .feed-actions a:hover { color: var(--primary); }
+        .feed-card .feed-actions a.liked { color: var(--primary); }
+        .feed-card .feed-actions i { margin-right: 5px; }
+
+        .side-card {
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .side-card h6 {
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-bg);
+        }
+        .side-card .trending-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .side-card .trending-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+        .side-card .trending-item strong { font-size: 0.85rem; display: block; }
+        .side-card .trending-item small { color: var(--gray); font-size: 0.75rem; }
+        .side-card .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 14px;
+            font-size: 0.85rem;
+        }
+        .side-card .activity-item .act-icon {
+            width: 30px;
+            height: 30px;
+            min-width: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--white);
+        }
+        .side-card .activity-item strong { font-size: 0.85rem; }
+        .side-card .activity-item small { color: var(--gray); display: block; }
+        .side-card .activity-item .time { font-size: 0.7rem; color: var(--gray); }
+    </style>
+</head>
+<body class="dash-body">
+
+    <!-- ===== USER NAVBAR ===== -->
+    <nav class="dash-nav">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <a href="dashboard.html" class="brand text-decoration-none"><i class="fas fa-utensils me-2"></i>Recipe<span>Share</span></a>
+                <div class="d-flex align-items-center">
+                    <div class="nav-icons">
+                        <a href="#" title="Notifications"><i class="fas fa-bell"></i><span class="badge">3</span></a>
+                        <a href="#" title="Messages"><i class="fas fa-envelope"></i><span class="badge">2</span></a>
+                        <a href="#" title="Upload Recipe"><i class="fas fa-plus-circle" style="color: var(--primary);"></i></a>
+                    </div>
+                    <div class="user-profile dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none text-dark" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User">
+                            <div>
+                                <strong id="userName">User</strong>
+                                <small id="userEmail">user@email.com</small>
+                            </div>
+                            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--gray);"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="border-radius: 10px; border: none; min-width: 180px;">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2" style="color: var(--primary);"></i>My Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-book-open me-2" style="color: var(--primary);"></i>My Recipes</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2" style="color: var(--primary);"></i>Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); $.post('/api/logout', function(){ window.location.href='/index.html'; });"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="dash-content">
+        <div class="container">
+            <div class="row">
+                <!-- ===== LEFT: FEED ===== -->
+                <div class="col-lg-8">
+
+                    <!-- Welcome -->
+                    <div class="welcome-card">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h3>Welcome back, <span id="welcomeName">User</span>! <i class="fas fa-hand-peace"></i></h3>
+                                <p>Your dashboard is ready. Share your own recipes and get inspired!</p>
+                            </div>
+                            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                <a href="#" class="btn-light-custom btn"><i class="fas fa-plus me-2"></i>Share Recipe</a>
+                            </div>
+                        </div>
+                    </div>
+
+                                        <!-- Feed Filter Tabs -->
+                    <div class="d-flex gap-2 mb-4">
+                        <button class="filter-btn active" style="cursor:pointer;">Latest</button>
+                        <button class="filter-btn" style="cursor:pointer;">Following</button>
+                        <button class="filter-btn" style="cursor:pointer;">Trending</button>
+                    </div>
+
+                    <!-- Empty Feed -->
+                    <div class="feed-card text-center py-5">
+                        <div class="feed-body">
+                            <i class="fas fa-utensils" style="font-size: 3rem; color: var(--gray); opacity: 0.4; margin-bottom: 15px; display: block;"></i>
+                            <h5 style="color: var(--gray);">No recipes yet</h5>
+                            <p style="color: var(--gray); font-size: 0.9rem;">Be the first to share a recipe with the community!</p>
+                            <a href="#" class="btn btn-primary-custom btn-sm mt-2"><i class="fas fa-plus me-1"></i>Share Recipe</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== RIGHT: SIDEBAR ===== -->
+                <div class="col-lg-4">
+
+                    <!-- User Stats -->
+                    <div class="side-card text-center">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 10px;">
+                        <h5 class="fw-bold mb-1" id="sideUserName">User</h5>
+                        <small style="color: var(--gray);" id="sideUserEmail">user@email.com</small>
+                        <hr>
+                        <div class="d-flex justify-content-around">
+                            <div>
+                                <strong style="font-size: 1.3rem; color: var(--primary);">0</strong>
+                                <p style="font-size: 0.75rem; color: var(--gray); margin: 0;">Recipes</p>
+                            </div>
+                            <div>
+                                <strong style="font-size: 1.3rem; color: var(--primary);">0</strong>
+                                <p style="font-size: 0.75rem; color: var(--gray); margin: 0;">Followers</p>
+                            </div>
+                            <div>
+                                <strong style="font-size: 1.3rem; color: var(--primary);">0</strong>
+                                <p style="font-size: 0.75rem; color: var(--gray); margin: 0;">Following</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trending Recipes -->
+                    <div class="side-card">
+                        <h6><i class="fas fa-fire me-2" style="color: var(--primary);"></i>Trending Recipes</h6>
+                        <div class="text-center py-3">
+                            <small style="color: var(--gray);">No trending recipes yet</small>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="side-card">
+                        <h6><i class="fas fa-bolt me-2" style="color: #00b894;"></i>Recent Activity</h6>
+                        <div class="text-center py-3">
+                            <small style="color: var(--gray);">No recent activity</small>
+                        </div>
+                    </div>
+
+                    <!-- Suggested Chefs -->
+                    <div class="side-card">
+                        <h6><i class="fas fa-users me-2" style="color: var(--primary);"></i>Suggested Chefs</h6>
+                        <div class="text-center py-3">
+                            <small style="color: var(--gray);">No suggestions yet</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        $.get('/api/me').done(function (user) {
+            $('#userName').text(user.name);
+            $('#userEmail').text(user.email);
+            $('#sideUserName').text(user.name);
+            $('#sideUserEmail').text(user.email);
+            $('#welcomeName').text(user.name.split(' ')[0]);
+        }).fail(function () {
+            window.location.href = '/pages/login.html';
+        });
+    </script>
+</body>
+</html>

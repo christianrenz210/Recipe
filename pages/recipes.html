@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipes - RecipeShare</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html"><i class="fas fa-utensils"></i>Recipe<span>Share</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="recipes.html">Recipes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                </ul>
+                <div class="nav-cta">
+                    <a href="login.html" class="btn btn-outline-custom btn-sm">Login</a>
+                    <a href="register.html" class="btn btn-primary-custom btn-sm">Register</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== PAGE BANNER ===== -->
+    <section class="page-banner">
+        <div class="container">
+            <h1>Our Recipes</h1>
+            <p>Explore hundreds of lutong-Pinoy recipes shared by our community</p>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                    <li class="breadcrumb-item active">Recipes</li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+
+    <!-- ===== RECIPES CONTENT ===== -->
+    <section class="recipes-page">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="breakfast">Breakfast</button>
+                        <button class="filter-btn" data-filter="lunch">Lunch</button>
+                        <button class="filter-btn" data-filter="dinner">Dinner</button>
+                        <button class="filter-btn" data-filter="dessert">Dessert</button>
+                        <button class="filter-btn" data-filter="snacks">Snacks</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="recipeSearch" placeholder="Search recipes...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="recipe-card" data-category="breakfast">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Tapsilog_in_saudi_arabia.jpg/500px-Tapsilog_in_saudi_arabia.jpg" alt="Tapsilog">
+                        <div class="recipe-card-body">
+                            <span class="category">Breakfast</span>
+                            <h5>Tapsilog</h5>
+                            <p>Classic Filipino breakfast with cured beef tapa, garlic fried rice, and sunny egg.</p>
+                        </div>
+                        <div class="recipe-card-footer">
+                            <span><i class="far fa-clock"></i> 25 mins</span>
+                            <span class="rating"><i class="fas fa-star"></i> 4.8</span>
+                            <a href="recipe-detail.html" class="btn btn-sm btn-outline-custom">View</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="recipe-card" data-category="lunch">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Chicken_adobo.jpg/500px-Chicken_adobo.jpg" alt="Chicken Adobo">
+                        <div class="recipe-card-body">
+                            <span class="category">Lunch</span>
+                            <h5>Chicken Adobo</h5>
+                            <p>Tender chicken simmered in soy sauce, vinegar, garlic, bay leaves, and peppercorns.</p>
+                        </div>
+                        <div class="recipe-card-footer">
+                            <span><i class="far fa-clock"></i> 45 mins</span>
+                            <span class="rating"><i class="fas fa-star"></i> 4.9</span>
+                            <a href="recipe-detail.html" class="btn btn-sm btn-outline-custom">View</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="recipe-card" data-category="dinner">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Sinigang_na_baboy.jpg/500px-Sinigang_na_baboy.jpg" alt="Sinigang">
+                        <div class="recipe-card-body">
+                            <span class="category">Dinner</span>
+                            <h5>Sinigang na Baboy</h5>
+                            <p>Savory sour tamarind soup with tender pork ribs, kangkong, and fresh vegetables.</p>
+                        </div>
+                        <div class="recipe-card-footer">
+                            <span><i class="far fa-clock"></i> 60 mins</span>
+                            <span class="rating"><i class="fas fa-star"></i> 4.8</span>
+                            <a href="recipe-detail.html" class="btn btn-sm btn-outline-custom">View</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="recipe-card" data-category="dessert">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Halu-halo.jpg/500px-Halu-halo.jpg" alt="Halo-Halo">
+                        <div class="recipe-card-body">
+                            <span class="category">Dessert</span>
+                            <h5>Halo-Halo</h5>
+                            <p>Refreshing shaved ice with sweet beans, sago, gulaman, leche flan, and ube ice cream.</p>
+                        </div>
+                        <div class="recipe-card-footer">
+                            <span><i class="far fa-clock"></i> 15 mins</span>
+                            <span class="rating"><i class="fas fa-star"></i> 4.7</span>
+                            <a href="recipe-detail.html" class="btn btn-sm btn-outline-custom">View</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="recipe-card" data-category="breakfast">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Champorado_%28Philippines%29.jpg/500px-Champorado_%28Philippines%29.jpg" alt="Champorado">
+                        <div class="recipe-card-body">
+                            <span class="category">Breakfast</span>
+                            <h5>Champorado</h5>
+                            <p>Sweet chocolate rice porridge topped with evaporated milk and tuyo on the side.</p>
+                        </div>
+                        <div class="recipe-card-footer">
+                            <span><i class="far fa-clock"></i> 20 mins</span>
+                            <span class="rating"><i class="fas fa-star"></i> 4.6</span>
+                            <a href="recipe-detail.html" class="btn btn-sm btn-outline-custom">View</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="recipe-card" data-category="dinner">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e2/Oxtail_kare-kare_1.JPG" alt="Kare-Kare">
+                        <div class="recipe-card-body">
+                            <span class="category">Dinner</span>
+                            <h5>Kare-Kare</h5>
+                            <p>Oxtail and tripe in creamy peanut sauce with bagoong on the side.</p>
+                        </div>
+                        <div class="recipe-card-footer">
+                            <span><i class="far fa-clock"></i> 120 mins</span>
+                            <span class="rating"><i class="fas fa-star"></i> 4.7</span>
+                            <a href="recipe-detail.html" class="btn btn-sm btn-outline-custom">View</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="recipe-card" data-category="snacks">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Tray_of_Lumpiang_Shanghai.JPG" alt="Lumpia">
+                        <div class="recipe-card-body">
+                            <span class="category">Snacks</span>
+                            <h5>Lumpiang Shanghai</h5>
+                            <p>Crispy fried spring rolls filled with seasoned ground pork and vegetables.</p>
+                        </div>
+                        <div class="recipe-card-footer">
+                            <span><i class="far fa-clock"></i> 40 mins</span>
+                            <span class="rating"><i class="fas fa-star"></i> 4.8</span>
+                            <a href="recipe-detail.html" class="btn btn-sm btn-outline-custom">View</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="recipe-card" data-category="lunch">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/Pancit_Guidado.jpg" alt="Pancit Canton">
+                        <div class="recipe-card-body">
+                            <span class="category">Lunch</span>
+                            <h5>Pancit Canton</h5>
+                            <p>Stir-fried egg noodles with vegetables, chicken, and savory soy-calamansi sauce.</p>
+                        </div>
+                        <div class="recipe-card-footer">
+                            <span><i class="far fa-clock"></i> 30 mins</span>
+                            <span class="rating"><i class="fas fa-star"></i> 4.7</span>
+                            <a href="recipe-detail.html" class="btn btn-sm btn-outline-custom">View</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="recipe-card" data-category="dessert">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/43/Flan_de_huevo_y_caf%C3%A9.jpg" alt="Leche Flan">
+                        <div class="recipe-card-body">
+                            <span class="category">Dessert</span>
+                            <h5>Leche Flan</h5>
+                            <p>Rich and creamy caramel custard dessert made with eggs and condensed milk.</p>
+                        </div>
+                        <div class="recipe-card-footer">
+                            <span><i class="far fa-clock"></i> 60 mins</span>
+                            <span class="rating"><i class="fas fa-star"></i> 4.9</span>
+                            <a href="recipe-detail.html" class="btn btn-sm btn-outline-custom">View</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== PAGINATION ===== -->
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled"><a class="page-link" href="#"><i class="fas fa-chevron-left"></i></a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5><i class="fas fa-utensils me-2"></i>RecipeShare</h5>
+                    <p>Your ultimate destination for discovering, sharing, and celebrating Filipino recipes from every province and household.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="recipes.html">Recipes</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 mb-4">
+                    <h5>Recipe Categories</h5>
+                    <ul class="footer-links">
+                        <li><a href="recipes.html">Breakfast</a></li>
+                        <li><a href="recipes.html">Lunch</a></li>
+                        <li><a href="recipes.html">Dinner</a></li>
+                        <li><a href="recipes.html">Desserts</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 mb-4">
+                    <h5>Contact Info</h5>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Foodie Street, Manila</li>
+                        <li><i class="fas fa-envelope me-2"></i> hello@recipeshare.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +63 912 345 6789</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 RecipeShare. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/script.js"></script>
+</body>
+</html>

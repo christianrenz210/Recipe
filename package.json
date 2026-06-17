@@ -1,0 +1,14 @@
+{
+  "name": "recipeshare",
+  "version": "1.0.0",
+  "description": "Recipe sharing website with Node.js backend",
+  "main": "serve.js",
+  "scripts": {
+    "start": "node serve.js",
+    "dev": "node serve.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3"
+  }
+}

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - RecipeShare</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+</head>
+<body class="admin-body">
+
+    <!-- ===== SIDEBAR ===== -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-utensils"></i>RecipeShare
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="dashboard.html" class="active"><i class="fas fa-th-large"></i> Dashboard</a></li>
+            <li><a href="#"><i class="fas fa-users"></i> Users</a></li>
+            <li><a href="#"><i class="fas fa-book-open"></i> Recipes</a></li>
+            <li><a href="#"><i class="fas fa-star"></i> Reviews</a></li>
+            <li><a href="#"><i class="fas fa-tags"></i> Categories</a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+            <li class="logout"><a href="#" onclick="event.preventDefault(); $.post('/api/logout', function(){ window.location.href='/pages/login.html'; });"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="admin-main">
+
+        <!-- ===== HEADER ===== -->
+        <header class="admin-header">
+            <div class="admin-header-left">
+                <button class="sidebar-toggle"><i class="fas fa-bars"></i></button>
+                <h5>Dashboard</h5>
+            </div>
+            <div class="admin-header-right">
+                <div class="notif">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </div>
+                <div class="notif">
+                    <i class="fas fa-envelope"></i>
+                    <span class="badge">5</span>
+                </div>
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Admin" class="admin-avatar">
+                <span id="adminName" class="ms-2 fw500" style="font-size: 0.9rem;">Admin</span>
+            </div>
+        </header>
+
+        <!-- ===== CONTENT ===== -->
+        <div class="admin-content">
+
+            <!-- Stats -->
+            <div class="row stats-grid">
+                <div class="col-xl-3 col-lg-6 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon red"><i class="fas fa-users"></i></div>
+                        <div class="stat-info">
+                            <h4>0</h4>
+                            <p>Total Users</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-book-open"></i></div>
+                        <div class="stat-info">
+                            <h4>0</h4>
+                            <p>Total Recipes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon yellow"><i class="fas fa-clock"></i></div>
+                        <div class="stat-info">
+                            <h4>0</h4>
+                            <p>Pending Reviews</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-chart-line"></i></div>
+                        <div class="stat-info">
+                            <h4>0</h4>
+                            <p>Monthly Visitors</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manage Recipes table -->
+            <div class="admin-table-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-book-open me-2" style="color: var(--primary);"></i>Manage Recipes</h5>
+                    <a href="#" class="btn btn-sm btn-outline-custom">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table admin-table">
+                        <thead>
+                            <tr>
+                                <th>Recipe</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="text-center py-4" style="color: var(--gray);">No recipes yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Users table -->
+            <div class="admin-table-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-users me-2" style="color: var(--primary);"></i>Recent Users</h5>
+                    <a href="#" class="btn btn-sm btn-outline-custom">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table admin-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="4" class="text-center py-4" style="color: var(--gray);">No users yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="text-center mt-4" style="color: var(--gray); font-size: 0.85rem;">
+                <p>&copy; 2026 RecipeShare Admin Panel.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        $.get('/api/me').done(function (user) {
+            if (user.role !== 'admin') { window.location.href = '/pages/login.html'; return; }
+            $('#adminName').text(user.name);
+        }).fail(function () {
+            window.location.href = '/pages/login.html';
+        });
+    </script>
+</body>
+</html>
