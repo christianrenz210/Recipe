@@ -357,6 +357,40 @@ ul { list-style: none; }
 .page-banner .breadcrumb-item.active { color: var(--white); }
 .page-banner .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.5); }
 
+/* ===== SIMPLE BREADCRUMB (for pages without page-banner) ===== */
+.simple-breadcrumb {
+    padding: 12px 0;
+    margin-bottom: 0;
+}
+.simple-breadcrumb .breadcrumb {
+    background: transparent;
+    margin-bottom: 0;
+    padding: 0;
+}
+.simple-breadcrumb .breadcrumb-item { font-size: 0.85rem; }
+.simple-breadcrumb .breadcrumb-item a { color: var(--primary); text-decoration: none; }
+.simple-breadcrumb .breadcrumb-item a:hover { text-decoration: underline; }
+.simple-breadcrumb .breadcrumb-item.active { color: var(--gray); }
+
+/* ===== AUTH BREADCRUMB ===== */
+.auth-breadcrumb {
+    position: absolute;
+    top: 15px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 1;
+}
+.auth-breadcrumb .breadcrumb {
+    background: transparent;
+    justify-content: center;
+    margin-bottom: 0;
+}
+.auth-breadcrumb .breadcrumb-item { font-size: 0.85rem; }
+.auth-breadcrumb .breadcrumb-item a { color: var(--primary); text-decoration: none; }
+.auth-breadcrumb .breadcrumb-item a:hover { text-decoration: underline; }
+.auth-breadcrumb .breadcrumb-item.active { color: var(--gray); }
+
 /* ===== RECIPES PAGE ===== */
 .recipes-page { padding: 60px 0; }
 .filter-buttons { margin-bottom: 30px; }
@@ -601,6 +635,7 @@ ul { list-style: none; }
     justify-content: center;
     background: linear-gradient(135deg, var(--light-bg) 0%, #ffe0e0 100%);
     padding: 40px 20px;
+    position: relative;
 }
 .auth-card {
     background: var(--white);

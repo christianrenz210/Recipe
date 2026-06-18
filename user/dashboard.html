@@ -179,6 +179,40 @@
         .side-card .activity-item strong { font-size: 0.85rem; }
         .side-card .activity-item small { color: var(--gray); display: block; }
         .side-card .activity-item .time { font-size: 0.7rem; color: var(--gray); }
+
+        @media (max-width: 767px) {
+            .dash-nav .brand { font-size: 1.1rem; }
+            .dash-nav .nav-icons a { font-size: 1rem; margin-left: 12px; }
+            .dash-nav .user-profile { margin-left: 10px; }
+            .dash-nav .user-profile img { width: 32px; height: 32px; }
+            .dash-nav .user-profile strong { font-size: 0.8rem; }
+            .dash-nav .user-profile small { display: none; }
+            .dash-content { padding: 15px 0; }
+            .welcome-card { padding: 20px; }
+            .welcome-card h3 { font-size: 1.2rem; }
+            .welcome-card .btn-light-custom { padding: 8px 18px; font-size: 0.85rem; }
+            .feed-card .feed-img { height: 180px; }
+            .feed-card .feed-body { padding: 15px; }
+            .feed-card .feed-body .d-flex.gap-2 .btn { font-size: 0.8rem; padding: 5px 12px; }
+            .side-card { padding: 15px; }
+            .side-card h5 { font-size: 1.1rem; }
+            .star-rating i { font-size: 1rem !important; }
+            .comments-section textarea { font-size: 0.85rem; }
+        }
+
+        @media (max-width: 575px) {
+            .dash-nav .nav-icons a { margin-left: 8px; }
+            .dash-nav .nav-icons .badge { display: none; }
+            .feed-card .feed-img { height: 150px; }
+            .feed-card .feed-body { padding: 12px; }
+            .feed-card .feed-body .d-flex.gap-2 { gap: 5px; }
+            .feed-card .feed-body .d-flex.gap-2 .btn { font-size: 0.75rem; padding: 4px 8px; }
+            .welcome-card .btn-light-custom { display: block; width: 100%; text-align: center; }
+            .d-flex.gap-2.mb-3 { flex-wrap: wrap; }
+            .d-flex.gap-2.mb-3 .filter-btn { font-size: 0.8rem; padding: 5px 14px; }
+            .side-card { padding: 12px; }
+            .side-card .stat-item { font-size: 0.8rem; }
+        }
     </style>
 </head>
 <body class="dash-body">
@@ -190,7 +224,9 @@
                 <a href="dashboard.html" class="brand text-decoration-none"><i class="fas fa-utensils me-2"></i>Recipe<span>Share</span></a>
                 <div class="d-flex align-items-center">
                     <div class="nav-icons">
-                        <a href="#" title="Notifications"><i class="fas fa-bell"></i><span class="badge">3</span></a>
+                        <a href="#" title="Notifications" id="notifBell" onclick="event.preventDefault(); loadNotifications();">
+                            <i class="fas fa-bell"></i><span class="badge" id="notifBadge" style="display:none;">0</span>
+                        </a>
                         <a href="#" title="Messages"><i class="fas fa-envelope"></i><span class="badge">2</span></a>
                         <a href="#" title="Upload Recipe"><i class="fas fa-plus-circle" style="color: var(--primary);"></i></a>
                     </div>
@@ -208,7 +244,7 @@
                             <li><a class="dropdown-item" href="#"><i class="fas fa-book-open me-2" style="color: var(--primary);"></i>My Recipes</a></li>
                             <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2" style="color: var(--primary);"></i>Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); $.post('/api/logout', function(){ window.location.href='/index.html'; });"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); $('#logoutModal').modal('show');"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                         </ul>
                     </div>
                 </div>
@@ -216,12 +252,112 @@
         </div>
     </nav>
 
+    <!-- ===== DELETE COMMENT CONFIRMATION MODAL ===== -->
+    <div class="modal fade" id="deleteCommentModal" tabindex="-1">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 15px; border: none;">
+                <div class="modal-body text-center p-4">
+                    <i class="fas fa-trash-alt" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 15px;"></i>
+                    <h5 class="fw-bold mb-2">Delete comment?</h5>
+                    <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 20px;">This action cannot be undone.</p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 50px; padding: 8px 24px;">Cancel</button>
+                        <button class="btn btn-primary-custom" id="confirmDeleteCommentBtn" style="border-radius: 50px; padding: 8px 24px; background:var(--primary);">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== LOGOUT CONFIRMATION MODAL ===== -->
+    <div class="modal fade" id="logoutModal" tabindex="-1">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 15px; border: none;">
+                <div class="modal-body text-center p-4">
+                    <i class="fas fa-sign-out-alt" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
+                    <h5 class="fw-bold mb-2">Leave already?</h5>
+                    <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 20px;">Are you sure you want to logout?</p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 50px; padding: 8px 24px;">Cancel</button>
+                        <button class="btn btn-primary-custom" id="confirmLogoutBtn" style="border-radius: 50px; padding: 8px 24px;">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SHARE/EDIT RECIPE MODAL ===== -->
+    <div class="modal fade" id="recipeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius: 15px; border: none;">
+                <div class="modal-header" style="background: var(--primary); color: var(--white); border-radius: 15px 15px 0 0;">
+                    <h5 class="modal-title" id="modalTitle"><i class="fas fa-plus-circle me-2"></i>Share Recipe</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="recipeForm">
+                        <input type="hidden" id="recipeId">
+                        <div class="mb-3">
+                            <label class="form-label fw500">Recipe Title</label>
+                            <input type="text" id="recipeTitle" class="form-control" placeholder="e.g. Chicken Adobo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw500">Description</label>
+                            <textarea id="recipeDescription" class="form-control" rows="2" placeholder="Brief description of your recipe"></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw500">Category</label>
+                                <select id="recipeCategory" class="form-select"></select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw500">Image</label>
+                                <input type="file" id="recipeImage" class="form-control" accept="image/*">
+                                <div id="imagePreview" class="mt-2" style="display:none;"><img src="" style="max-width:100%;max-height:120px;border-radius:6px;"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw500">Ingredients (one per line)</label>
+                            <textarea id="recipeIngredients" class="form-control" rows="5" placeholder="1 kg chicken thighs&#10;1/2 cup soy sauce&#10;1/2 cup vinegar"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw500">Instructions (one step per line)</label>
+                            <textarea id="recipeInstructions" class="form-control" rows="5" placeholder="1. Marinate chicken in soy sauce and garlic&#10;2. Sear chicken until golden&#10;3. Simmer with vinegar and spices"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary-custom" id="saveRecipeBtn"><i class="fas fa-save me-2"></i>Save Recipe</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== NOTIFICATION PANEL ===== -->
+    <div id="notifPanel" style="display:none;position:fixed;top:70px;right:20px;width:350px;max-height:400px;overflow-y:auto;background:#fff;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.15);z-index:9999;padding:15px;">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="fw-bold mb-0">Notifications</h6>
+            <a href="#" onclick="event.preventDefault();markNotifRead();" style="font-size:0.8rem;color:var(--primary);text-decoration:none;">Mark all read</a>
+        </div>
+        <div id="notifList"><small style="color:var(--gray);">Loading...</small></div>
+    </div>
+    <div id="notifOverlay" onclick="$('#notifPanel').hide();$(this).hide();" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:9998;"></div>
+
     <!-- ===== MAIN CONTENT ===== -->
     <div class="dash-content">
         <div class="container">
             <div class="row">
-                <!-- ===== LEFT: FEED ===== -->
+                <!-- ===== LEFT: MY RECIPES ===== -->
                 <div class="col-lg-8">
+
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb simple-breadcrumb">
+                            <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                            <li class="breadcrumb-item active">Dashboard</li>
+                        </ol>
+                    </nav>
 
                     <!-- Welcome -->
                     <div class="welcome-card">
@@ -231,27 +367,19 @@
                                 <p>Your dashboard is ready. Share your own recipes and get inspired!</p>
                             </div>
                             <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                <a href="#" class="btn-light-custom btn"><i class="fas fa-plus me-2"></i>Share Recipe</a>
+                                <a href="#" class="btn-light-custom btn" onclick="$('#recipeModal').modal('show'); resetRecipeForm();"><i class="fas fa-plus me-2"></i>Share Recipe</a>
                             </div>
                         </div>
                     </div>
 
-                                        <!-- Feed Filter Tabs -->
-                    <div class="d-flex gap-2 mb-4">
-                        <button class="filter-btn active" style="cursor:pointer;">Latest</button>
-                        <button class="filter-btn" style="cursor:pointer;">Following</button>
-                        <button class="filter-btn" style="cursor:pointer;">Trending</button>
+                    <div class="d-flex gap-2 mb-3">
+                        <button class="filter-btn active" onclick="loadFeed('all')">Latest</button>
+                        <button class="filter-btn" onclick="loadFeed('following')">Following</button>
+                        <button class="filter-btn" onclick="loadFeed('mine')">My Recipes</button>
                     </div>
-
-                    <!-- Empty Feed -->
-                    <div class="feed-card text-center py-5">
-                        <div class="feed-body">
-                            <i class="fas fa-utensils" style="font-size: 3rem; color: var(--gray); opacity: 0.4; margin-bottom: 15px; display: block;"></i>
-                            <h5 style="color: var(--gray);">No recipes yet</h5>
-                            <p style="color: var(--gray); font-size: 0.9rem;">Be the first to share a recipe with the community!</p>
-                            <a href="#" class="btn btn-primary-custom btn-sm mt-2"><i class="fas fa-plus me-1"></i>Share Recipe</a>
-                        </div>
-                    </div>
+                    <div id="myRecipesContainer"></div>
+                    <div id="recipeDetailView" style="display:none;"></div>
+                    <div id="userProfileView" style="display:none;"></div>
                 </div>
 
                 <!-- ===== RIGHT: SIDEBAR ===== -->
@@ -265,42 +393,30 @@
                         <hr>
                         <div class="d-flex justify-content-around">
                             <div>
-                                <strong style="font-size: 1.3rem; color: var(--primary);">0</strong>
+                                <strong id="recipeCount" style="font-size: 1.3rem; color: var(--primary);">0</strong>
                                 <p style="font-size: 0.75rem; color: var(--gray); margin: 0;">Recipes</p>
                             </div>
                             <div>
-                                <strong style="font-size: 1.3rem; color: var(--primary);">0</strong>
+                                <strong id="followerCount" style="font-size: 1.3rem; color: var(--primary);">0</strong>
                                 <p style="font-size: 0.75rem; color: var(--gray); margin: 0;">Followers</p>
                             </div>
                             <div>
-                                <strong style="font-size: 1.3rem; color: var(--primary);">0</strong>
+                                <strong id="followingCount" style="font-size: 1.3rem; color: var(--primary);">0</strong>
                                 <p style="font-size: 0.75rem; color: var(--gray); margin: 0;">Following</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Trending Recipes -->
-                    <div class="side-card">
-                        <h6><i class="fas fa-fire me-2" style="color: var(--primary);"></i>Trending Recipes</h6>
-                        <div class="text-center py-3">
-                            <small style="color: var(--gray);">No trending recipes yet</small>
-                        </div>
-                    </div>
-
-                    <!-- Recent Activity -->
-                    <div class="side-card">
-                        <h6><i class="fas fa-bolt me-2" style="color: #00b894;"></i>Recent Activity</h6>
-                        <div class="text-center py-3">
-                            <small style="color: var(--gray);">No recent activity</small>
-                        </div>
+                    <!-- Your Followers -->
+                    <div class="side-card" id="followersCard">
+                        <h6><i class="fas fa-heart me-2" style="color: var(--primary);"></i>Followers</h6>
+                        <div id="followersList"><div class="text-center py-3"><small style="color: var(--gray);">Loading...</small></div></div>
                     </div>
 
                     <!-- Suggested Chefs -->
-                    <div class="side-card">
+                    <div class="side-card" id="suggestedChefsCard">
                         <h6><i class="fas fa-users me-2" style="color: var(--primary);"></i>Suggested Chefs</h6>
-                        <div class="text-center py-3">
-                            <small style="color: var(--gray);">No suggestions yet</small>
-                        </div>
+                        <div id="suggestedChefsList"><div class="text-center py-3"><small style="color: var(--gray);">Loading...</small></div></div>
                     </div>
                 </div>
             </div>
@@ -309,16 +425,676 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="../js/script.js"></script>
     <script>
-        $.get('/api/me').done(function (user) {
-            $('#userName').text(user.name);
-            $('#userEmail').text(user.email);
-            $('#sideUserName').text(user.name);
-            $('#sideUserEmail').text(user.email);
-            $('#welcomeName').text(user.name.split(' ')[0]);
-        }).fail(function () {
-            window.location.href = '/pages/login.html';
+        var currentUser = null;
+
+        function resetRecipeForm() {
+            $('#recipeId').val('');
+            $('#recipeForm')[0].reset();
+            $('#imagePreview').hide();
+            $('#modalTitle').html('<i class="fas fa-plus-circle me-2"></i>Share Recipe');
+            $('#saveRecipeBtn').text('Save Recipe');
+        }
+
+        $('#recipeImage').on('change', function () {
+            var file = this.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#imagePreview img').attr('src', e.target.result);
+                    $('#imagePreview').show();
+                };
+                reader.readAsDataURL(file);
+            } else {
+                $('#imagePreview').hide();
+            }
+        });
+
+        var currentFilter = 'all';
+        var followingIds = [];
+        var likedRecipeIds = [];
+
+        function loadFeed(filter) {
+            currentFilter = filter || 'all';
+            $('.filter-btn').removeClass('active');
+            var filterMap = { 'all': 'latest', 'following': 'following', 'mine': 'my' };
+            $('.filter-btn').each(function () {
+                var txt = $(this).text().trim().toLowerCase();
+                if (txt.indexOf(filterMap[filter] || 'latest') > -1) $(this).addClass('active');
+            });
+            var urlMap = { 'mine': API + '/api/recipes/user/me', 'following': API + '/api/recipes/feed/following' };
+            var url = urlMap[filter] || API + '/api/recipes';
+            $.get(url).done(function (recipes) {
+                var container = $('#myRecipesContainer');
+                container.empty();
+                if (filter === 'mine') $('#recipeCount').text(recipes.length);
+                if (recipes.length === 0) {
+                    var msg = filter === 'mine'
+                        ? '<div class="feed-card text-center py-5"><div class="feed-body"><i class="fas fa-utensils" style="font-size: 3rem; color: var(--gray); opacity: 0.4; margin-bottom: 15px; display: block;"></i><h5 style="color: var(--gray);">No recipes yet</h5><p style="color: var(--gray); font-size: 0.9rem;">Be the first to share a recipe with the community!</p><button class="btn btn-primary-custom btn-sm mt-2" onclick="$(\'#recipeModal\').modal(\'show\'); resetRecipeForm();"><i class="fas fa-plus me-1"></i>Share Recipe</button></div></div>'
+                        : '<div class="feed-card text-center py-5"><div class="feed-body"><i class="fas fa-utensils" style="font-size: 3rem; color: var(--gray); opacity: 0.4; margin-bottom: 15px; display: block;"></i><h5 style="color: var(--gray);">No recipes from the community yet</h5><p style="color: var(--gray); font-size: 0.9rem;">Check back later!</p></div></div>';
+                    container.html(msg);
+                    return;
+                }
+                recipes.forEach(function (r) {
+                    var desc = (r.description || '').substring(0, 100);
+                    if (r.description && r.description.length > 100) desc += '...';
+                    var isMine = currentUser && r.author_id === currentUser.id;
+                    var authorHtml = r.author_name && !isMine ? '<span style="color: var(--gray); font-size:0.85rem;cursor:pointer;" onclick="viewUserProfile(' + r.author_id + ')"><i class="far fa-user me-1"></i>' + r.author_name + '</span>' : (r.author_name ? '<span style="color: var(--gray); font-size:0.85rem;"><i class="far fa-user me-1"></i>' + r.author_name + '</span>' : '');
+                    var isLiked = likedRecipeIds.indexOf(r.id) > -1;
+                    var likeBtnClass = isLiked ? 'liked' : '';
+                    var likeIcon = isLiked ? 'fas' : 'far';
+                    var actions = '<button class="btn btn-sm btn-outline-custom" onclick="viewRecipeDetail(' + r.id + ')"><i class="fas fa-eye me-1"></i>View</button>';
+                    if (isMine) {
+                        actions += '<button class="btn btn-sm btn-warning" onclick="editRecipe(' + r.id + ')"><i class="fas fa-edit"></i></button>' +
+                            '<button class="btn btn-sm btn-danger" onclick="deleteRecipe(' + r.id + ',\'' + r.title.replace(/'/g, "\\'") + '\')"><i class="fas fa-trash"></i></button>';
+                    } else if (currentUser) {
+                        var isFollowed = followingIds.indexOf(r.author_id) > -1;
+                        var followBtnClass = isFollowed ? 'btn-primary-custom' : 'btn-outline-custom';
+                        var followBtnText = isFollowed ? 'Following' : '+ Follow';
+                        actions += '<button class="btn btn-sm ' + followBtnClass + '" id="followBtn_' + r.author_id + '" onclick="toggleFollow(' + r.author_id + ')" onmouseover="if(this.textContent==\'Following\')this.textContent=\'Unfollow\';this.classList.remove(\'btn-primary-custom\');this.classList.add(\'btn-danger\')" onmouseout="if(this.textContent==\'Unfollow\')this.textContent=\'Following\';this.classList.remove(\'btn-danger\');this.classList.add(\'btn-primary-custom\')">' + followBtnText + '</button>';
+                    }
+                    var card = '<div class="feed-card">' +
+                        '<div class="row g-0">' +
+                        '<div class="col-md-4">' +
+                        '<img src="' + (r.image || 'https://via.placeholder.com/400x250?text=No+Image') + '" class="feed-img" style="height:100%;object-fit:cover;" alt="' + r.title + '">' +
+                        '</div>' +
+                        '<div class="col-md-8">' +
+                        '<div class="feed-body">' +
+                        '<div class="feed-header">' +
+                        '<div class="author">' +
+                        '<div><strong>' + r.title + '</strong><small>' + (r.category_name || 'Uncategorized') + '</small></div>' +
+                        '</div>' +
+                        '</div>' +
+                        '<p>' + desc + '</p>' +
+                        authorHtml +
+                        '<div class="d-flex gap-2 mt-2 flex-wrap">' + actions + '</div>' +
+                        '<div class="mt-2" style="font-size:0.9rem;display:flex;gap:15px;">' +
+                        '<a class="' + likeBtnClass + '" onclick="toggleLike(' + r.id + ')" style="cursor:pointer;text-decoration:none;"><i class="' + likeIcon + ' fa-heart" style="color:' + (isLiked ? 'var(--primary)' : 'var(--gray)') + ';"></i> <span id="likeCount_' + r.id + '" style="color:var(--gray);">' + (r.like_count || 0) + '</span></a>' +
+                        '<span style="color:var(--gray);"><i class="far fa-comment"></i> ' + (r.review_count || 0) + '</span>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>';
+                    container.append(card);
+                });
+            });
+        }
+
+        function viewRecipeDetail(id) {
+            $.get(API + '/api/recipes/' + id).done(function (r) {
+                $('#myRecipesContainer').hide();
+                var detail = $('#recipeDetailView');
+                var ingHtml = '';
+                if (r.ingredients) {
+                    r.ingredients.split('\n').forEach(function (line) {
+                        if (line.trim()) ingHtml += '<li><i class="fas fa-check-circle text-success me-2"></i>' + line.trim() + '</li>';
+                    });
+                }
+                var instHtml = '';
+                if (r.instructions) {
+                    r.instructions.split('\n').forEach(function (line, idx) {
+                        if (line.trim()) {
+                            var text = line.trim().replace(/^\d+[\.\)]\s*/, '');
+                            instHtml += '<div class="step"><div class="step-num">' + (idx + 1) + '</div><div><strong>Step ' + (idx + 1) + '</strong><p>' + text + '</p></div></div>';
+                        }
+                    });
+                }
+                var isLiked = r.user_liked || likedRecipeIds.indexOf(r.id) > -1;
+                var likeIcon = isLiked ? 'fas' : 'far';
+                var likeBtnClass = isLiked ? 'liked' : '';
+                detail.html(
+                    '<div class="feed-card p-4">' +
+                    '<button class="btn btn-sm btn-outline-custom mb-3" onclick="backToMyRecipes()"><i class="fas fa-arrow-left me-1"></i>Back to My Recipes</button>' +
+                    '<div class="row">' +
+                    '<div class="col-md-5">' +
+                    '<img src="' + (r.image || 'https://via.placeholder.com/600x400?text=No+Image') + '" class="img-fluid rounded" style="width:100%;object-fit:cover;max-height:350px;" alt="' + r.title + '">' +
+                    '</div>' +
+                    '<div class="col-md-7">' +
+                    '<h3 class="fw-bold">' + r.title + '</h3>' +
+                    '<p style="color: var(--gray);">' + (r.description || '') + '</p>' +
+                    '<div class="d-flex gap-3 mb-3 flex-wrap">' +
+                    '<span class="badge" style="background: var(--light-bg); color: var(--primary); font-size:0.85rem; padding:6px 14px;">' + (r.category_name || 'Uncategorized') + '</span>' +
+                    '<span style="color: var(--gray); font-size:0.85rem;"><i class="far fa-user me-1"></i>' + (r.author_name || 'You') + '</span>' +
+                    '</div>' +
+                    '<div class="d-flex gap-2">' +
+                    '<button class="btn btn-sm btn-success" onclick="downloadRecipePDF(' + r.id + ')"><i class="fas fa-file-pdf me-1"></i>PDF</button>' +
+                    '<button class="btn btn-sm btn-warning" onclick="editRecipe(' + r.id + '); backToMyRecipes();"><i class="fas fa-edit me-1"></i>Edit</button>' +
+                    '<button class="btn btn-sm btn-danger" onclick="deleteRecipe(' + r.id + ',\'' + r.title.replace(/'/g, "\\'") + '\')"><i class="fas fa-trash me-1"></i>Delete</button>' +
+                    '</div>' +
+                    '<div class="mt-2" style="font-size:0.95rem;display:flex;gap:15px;">' +
+                    '<a class="' + likeBtnClass + '" onclick="toggleLike(' + r.id + ')" style="cursor:pointer;text-decoration:none;"><i class="' + likeIcon + ' fa-heart" style="color:' + (isLiked ? 'var(--primary)' : 'var(--gray)') + ';"></i> <span id="likeCount_' + r.id + '" style="color:var(--gray);">' + (r.like_count || 0) + '</span></a>' +
+                    '<span style="color:var(--gray);"><i class="far fa-comment"></i> ' + (r.review_count || 0) + '</span>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '<hr>' +
+                    '<div class="row">' +
+                    '<div class="col-md-5">' +
+                    '<div class="ingredients-box p-3" style="background:var(--light-bg);border-radius:12px;">' +
+                    '<h5 class="fw-bold mb-3"><i class="fas fa-shopping-basket me-2" style="color:var(--primary);"></i>Ingredients</h5>' +
+                    '<ul class="list-unstyled mb-0">' + (ingHtml || '<li class="text-muted">No ingredients listed.</li>') + '</ul>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="col-md-7">' +
+                    '<h5 class="fw-bold mb-3"><i class="fas fa-list-ol me-2" style="color:var(--primary);"></i>Instructions</h5>' +
+                    (instHtml || '<p class="text-muted">No instructions provided.</p>') +
+                    '</div>' +
+                    '</div>' +
+                    '<hr>' +
+                    '<div class="comments-section">' +
+                    '<h5 class="fw-bold mb-3"><i class="fas fa-comments me-2" style="color:var(--primary);"></i>Comments <span id="commentsCount_' + r.id + '">(0)</span></h5>' +
+                    '<div id="commentsContainer_' + r.id + '"><div class="text-center py-3"><small style="color:var(--gray);">Loading comments...</small></div></div>' +
+                    '<div class="mt-3">' +
+                    '<div class="mb-2">' +
+                    '<span style="font-size:0.85rem;color:var(--gray);margin-right:8px;">Rating:</span>' +
+                    '<span class="star-rating" id="starRating_' + r.id + '">' +
+                    '<i class="fas fa-star" data-val="1" style="cursor:pointer;color:#ffc107;font-size:1.1rem;"></i>' +
+                    '<i class="fas fa-star" data-val="2" style="cursor:pointer;color:#ffc107;font-size:1.1rem;"></i>' +
+                    '<i class="fas fa-star" data-val="3" style="cursor:pointer;color:#ffc107;font-size:1.1rem;"></i>' +
+                    '<i class="fas fa-star" data-val="4" style="cursor:pointer;color:#ffc107;font-size:1.1rem;"></i>' +
+                    '<i class="fas fa-star" data-val="5" style="cursor:pointer;color:#ffc107;font-size:1.1rem;"></i>' +
+                    '<input type="hidden" id="ratingVal_' + r.id + '" value="5">' +
+                    '</span>' +
+                    '</div>' +
+                    '<textarea class="form-control" id="commentInput_' + r.id + '" rows="2" placeholder="Write a comment..."></textarea>' +
+                    '<button class="btn btn-sm btn-primary-custom mt-2" onclick="postComment(' + r.id + ', ' + r.author_id + ')"><i class="fas fa-paper-plane me-1"></i>Post</button>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>'
+                );
+                loadComments(r.id, r.author_id);
+                detail.show();
+            });
+        }
+
+        function downloadRecipePDF(id) {
+            $.get(API + '/api/recipes/' + id).done(function (r) {
+                var ingHtml = '';
+                var totalItems = 0;
+                if (r.ingredients) {
+                    r.ingredients.split('\n').forEach(function (line) {
+                        if (line.trim()) { ingHtml += '<tr><td style="padding:4px 8px;border-bottom:1px solid #eee;">' + line.trim() + '</td></tr>'; totalItems++; }
+                    });
+                }
+                if (!totalItems) ingHtml = '<tr><td style="padding:4px 8px;color:#999;">No ingredients listed.</td></tr>';
+                var instHtml = '';
+                var totalSteps = 0;
+                if (r.instructions) {
+                    r.instructions.split('\n').forEach(function (line, idx) {
+                        if (line.trim()) {
+                            var text = line.trim().replace(/^\d+[\.\)]\s*/, '');
+                            instHtml += '<div style="margin-bottom:12px;"><div style="background:#e74c3c;color:#fff;display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;border-radius:50%;font-size:13px;font-weight:bold;margin-right:8px;">' + (idx + 1) + '</div><strong>Step ' + (idx + 1) + ':</strong> ' + text + '</div>';
+                            totalSteps++;
+                        }
+                    });
+                }
+                if (!totalSteps) instHtml = '<p style="color:#999;">No instructions provided.</p>';
+
+                $('#pdfOverlay').remove();
+                var overlay = $('<div id="pdfOverlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:99999;overflow:auto;"></div>').appendTo('body');
+                var el = $('<div id="pdfContent" style="padding:30px;font-family:Segoe UI,sans-serif;max-width:700px;margin:0 auto;color:#222;">' +
+                    '<div style="text-align:center;margin-bottom:25px;">' +
+                    '<h1 style="margin:0 0 5px;font-size:26px;color:#e74c3c;">' + r.title + '</h1>' +
+                    '<p style="color:#888;margin:0;font-size:14px;">' + (r.category_name || 'Uncategorized') + '</p>' +
+                    '</div>' +
+                    (r.image ? '<div style="text-align:center;margin-bottom:20px;"><img src="' + r.image + '" style="max-width:100%;max-height:280px;border-radius:6px;"></div>' : '') +
+                    (r.description ? '<p style="color:#555;font-size:14px;text-align:center;margin-bottom:20px;">' + r.description + '</p>' : '') +
+                    '<hr style="border:none;border-top:2px solid #e74c3c;margin:20px 0;">' +
+                    '<h2 style="font-size:20px;color:#e74c3c;margin:0 0 15px 0;">Ingredients</h2>' +
+                    '<table style="width:100%;font-size:14px;line-height:1.7;border-collapse:collapse;">' + ingHtml + '</table>' +
+                    '<hr style="border:none;border-top:2px solid #e74c3c;margin:20px 0;">' +
+                    '<h2 style="font-size:20px;color:#e74c3c;margin:0 0 15px 0;">Instructions</h2>' +
+                    '<div style="font-size:14px;line-height:1.7;">' + instHtml + '</div>' +
+                    (r.author_name ? '<hr style="border:none;border-top:1px solid #ddd;margin:20px 0;"><p style="text-align:center;color:#aaa;font-size:12px;">Recipe by ' + r.author_name + ' &mdash; RecipeShare</p>' : '') +
+                    '</div>').appendTo(overlay);
+
+                setTimeout(function () {
+                    var fn = r.title.replace(/[^a-zA-Z0-9\s]/g,'').trim().replace(/\s+/g,'_') + '.pdf';
+                    html2pdf().from(el[0]).set({
+                        margin: [10, 12, 10, 12],
+                        filename: fn,
+                        image: { type: 'jpeg', quality: 0.95 },
+                        html2canvas: { scale: 2, useCORS: true, logging: false, letterRendering: true },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                        pagebreak: { mode: 'avoid-all' }
+                    }).save().then(function () { overlay.remove(); });
+                }, 500);
+            });
+        }
+
+        function backToMyRecipes() {
+            $('#recipeDetailView, #userProfileView').empty().hide();
+            $('#myRecipesContainer').show();
+        }
+
+        function viewUserProfile(userId) {
+            $('#myRecipesContainer, #recipeDetailView').hide();
+            $('#userProfileView').empty().show().html('<div class="text-center py-5"><div class="spinner-border" style="color:var(--primary);"></div></div>');
+
+            $.get(API + '/api/users/' + userId + '/profile').done(function (u) {
+                $.get(API + '/api/users/' + userId + '/recipes').done(function (recipes) {
+                    var isMine = currentUser && userId === currentUser.id;
+                    var followBtn = '';
+                    if (!isMine && currentUser) {
+                        followBtn = u.isFollowing
+                            ? '<button class="btn btn-sm btn-primary-custom" id="profileFollowBtn" onclick="toggleFollowProfile(' + userId + ', true)" onmouseover="this.textContent=\'Unfollow\';this.classList.remove(\'btn-primary-custom\');this.classList.add(\'btn-danger\')" onmouseout="this.textContent=\'Following\';this.classList.remove(\'btn-danger\');this.classList.add(\'btn-primary-custom\')">Following</button>'
+                            : '<button class="btn btn-sm btn-outline-custom" id="profileFollowBtn" onclick="toggleFollowProfile(' + userId + ', false)">+ Follow</button>';
+                    }
+                    var recipeHtml = '';
+                    recipes.forEach(function (r) {
+                        var desc = (r.description || '').substring(0, 120);
+                        if (r.description && r.description.length > 120) desc += '...';
+                        recipeHtml += '<div class="feed-card"><div class="row g-0"><div class="col-md-4"><img src="' + (r.image || 'https://via.placeholder.com/400x250?text=No+Image') + '" class="feed-img" style="height:100%;object-fit:cover;" alt="' + r.title + '"></div><div class="col-md-8"><div class="feed-body"><h5 class="fw-bold">' + r.title + '</h5><p style="color:var(--gray);font-size:0.9rem;">' + desc + '</p><span class="badge" style="background:var(--light-bg);color:var(--primary);">' + (r.category_name || 'Uncategorized') + '</span><div class="mt-2"><button class="btn btn-sm btn-outline-custom" onclick="viewRecipeDetail(' + r.id + ')"><i class="fas fa-eye me-1"></i>View</button></div></div></div></div></div>';
+                    });
+                    if (!recipes.length) recipeHtml = '<div class="text-center py-4"><small style="color:var(--gray);">No recipes yet</small></div>';
+
+                    $('#userProfileView').html(
+                        '<div class="feed-card p-4">' +
+                        '<button class="btn btn-sm btn-outline-custom mb-3" onclick="backToMyRecipes()"><i class="fas fa-arrow-left me-1"></i>Back</button>' +
+                        '<div class="text-center mb-4">' +
+                        '<img src="https://randomuser.me/api/portraits/men/' + (u.id % 50 + 1) + '.jpg" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:10px;">' +
+                        '<h4 class="fw-bold">' + u.name + '</h4>' +
+                        '<small style="color:var(--gray);">' + u.email + '</small>' +
+                        '<div class="d-flex justify-content-center gap-4 mt-3">' +
+                        '<div><strong style="font-size:1.2rem;color:var(--primary);">' + u.recipeCount + '</strong><p style="font-size:0.75rem;color:var(--gray);margin:0;">Recipes</p></div>' +
+                        '<div><strong style="font-size:1.2rem;color:var(--primary);">' + u.followerCount + '</strong><p style="font-size:0.75rem;color:var(--gray);margin:0;">Followers</p></div>' +
+                        '<div><strong style="font-size:1.2rem;color:var(--primary);">' + u.followingCount + '</strong><p style="font-size:0.75rem;color:var(--gray);margin:0;">Following</p></div>' +
+                        '</div>' +
+                        '<div class="mt-3">' + followBtn + '</div>' +
+                        '</div>' +
+                        '<hr>' +
+                        '<h5 class="fw-bold mb-3"><i class="fas fa-book-open me-2" style="color:var(--primary);"></i>Recipes</h5>' +
+                        recipeHtml +
+                        '</div>'
+                    );
+                });
+            }).fail(function () {
+                $('#userProfileView').html('<div class="text-center py-5"><p style="color:var(--gray);">User not found</p><button class="btn btn-sm btn-outline-custom" onclick="backToMyRecipes()">Back</button></div>');
+            });
+        }
+
+        function toggleFollowProfile(userId, isCurrentlyFollowing) {
+            var url = API + '/api/users/' + userId + (isCurrentlyFollowing ? '/unfollow' : '/follow');
+            $.post(url).done(function () {
+                $.get(API + '/api/users/me/following/ids').done(function (ids) {
+                    followingIds = ids;
+                }).always(function () {
+                    viewUserProfile(userId);
+                    loadUserProfile();
+                    loadSuggestedChefs();
+                    loadFollowers();
+                    loadFeed(currentFilter);
+                });
+            }).fail(function () { alert('Failed'); });
+        }
+
+        function editRecipe(id) {
+            $.get(API + '/api/recipes/' + id).done(function (r) {
+                $('#recipeId').val(r.id);
+                $('#recipeTitle').val(r.title);
+                $('#recipeDescription').val(r.description);
+                $('#recipeCategory').val(r.category_id);
+                $('#recipeIngredients').val(r.ingredients);
+                $('#recipeInstructions').val(r.instructions);
+                if (r.image) {
+                    $('#imagePreview img').attr('src', r.image);
+                    $('#imagePreview').show();
+                } else {
+                    $('#imagePreview').hide();
+                }
+                $('#modalTitle').html('<i class="fas fa-edit me-2"></i>Edit Recipe');
+                $('#saveRecipeBtn').text('Update Recipe');
+                $('#recipeModal').modal('show');
+            });
+        }
+
+        function deleteRecipe(id, title) {
+            if (confirm('Delete "' + title + '"?')) {
+                $.ajax({ url: API + '/api/recipes/' + id, method: 'DELETE' })
+                    .done(function () { loadFeed(currentFilter); })
+                    .fail(function () { alert('Failed to delete recipe'); });
+            }
+        }
+
+        function loadCategories() {
+            $.get(API + '/api/categories', function (cats) {
+                var sel = $('#recipeCategory');
+                sel.empty().append('<option value="">Select category</option>');
+                cats.forEach(function (c) {
+                    sel.append('<option value="' + c.id + '">' + c.name + '</option>');
+                });
+            });
+        }
+
+        function suggestFollow(userId) {
+            var url = API + '/api/users/' + userId + '/follow';
+            $.post(url).done(function () {
+                $.get(API + '/api/users/me/following/ids').done(function (ids) {
+                    followingIds = ids;
+                }).always(function () {
+                    loadSuggestedChefs();
+                    loadFollowers();
+                    loadFeed(currentFilter);
+                });
+            });
+        }
+
+        function toggleFollow(authorId) {
+            var btn = $('#followBtn_' + authorId);
+            var isFollowing = btn.length && btn.text().trim() === 'Following';
+            var url = API + '/api/users/' + authorId + (isFollowing ? '/unfollow' : '/follow');
+            $.post(url).done(function () {
+                $.get(API + '/api/users/me/following/ids').done(function (ids) {
+                    followingIds = ids;
+                }).always(function () {
+                    loadUserProfile();
+                    loadSuggestedChefs();
+                    loadFollowers();
+                    if ($('#userProfileView').is(':visible')) viewUserProfile(authorId);
+                    loadFeed(currentFilter);
+                });
+            }).fail(function () { alert('Failed to update follow status'); });
+        }
+
+        function followersFollowBack(userId) {
+            $.post(API + '/api/users/' + userId + '/follow').done(function () {
+                $.get(API + '/api/users/me/following/ids').done(function (ids) { followingIds = ids; });
+                loadFollowers();
+                loadUserProfile();
+            });
+        }
+
+        function removeFollower(userId) {
+            if (!confirm('Remove this follower?')) return;
+            $.post(API + '/api/users/' + userId + '/remove-follower').done(function () {
+                loadFollowers();
+                loadUserProfile();
+            });
+        }
+
+        function loadFollowers() {
+            if (!currentUser) return;
+            $.get(API + '/api/users/' + currentUser.id + '/followers').done(function (users) {
+                var list = $('#followersList');
+                if (!users.length) {
+                    list.html('<div class="text-center py-3"><small style="color: var(--gray);">No followers yet</small></div>');
+                    return;
+                }
+                var html = '';
+                users.forEach(function (u) {
+                    var isMe = currentUser && u.id === currentUser.id;
+                    var followBtn = '';
+                    if (!isMe) {
+                        if (u.is_following_back) {
+                            followBtn = '<button class="btn btn-sm btn-primary-custom" style="font-size:0.7rem;padding:1px 8px;" disabled>Following</button>';
+                        } else {
+                            followBtn = '<button class="btn btn-sm btn-outline-custom" onclick="followersFollowBack(' + u.id + ')" style="font-size:0.7rem;padding:1px 8px;">+ Follow Back</button>';
+                        }
+                    }
+                    html += '<div class="d-flex align-items-center justify-content-between mb-2 px-2">' +
+                        '<div class="d-flex align-items-center gap-2" style="cursor:pointer;" onclick="viewUserProfile(' + u.id + ')">' +
+                        '<img src="https://randomuser.me/api/portraits/men/' + (u.id % 50 + 1) + '.jpg" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">' +
+                        '<div><strong style="font-size:0.85rem;">' + u.name + '</strong></div>' +
+                        '</div>' +
+                        '<div class="d-flex gap-1">' + followBtn +
+                        (!isMe ? '<button class="btn btn-sm btn-outline-danger" onclick="removeFollower(' + u.id + ')" style="font-size:0.7rem;padding:1px 8px;" title="Remove follower"><i class="fas fa-times"></i></button>' : '') +
+                        '</div></div>';
+                });
+                list.html(html);
+            }).fail(function () { $('#followersList').html('<div class="text-center py-3"><small style="color: var(--gray);">No followers yet</small></div>'); });
+        }
+
+        function loadSuggestedChefs() {
+            $.get(API + '/api/users/suggested').done(function (users) {
+                var list = $('#suggestedChefsList');
+                if (!users.length) {
+                    list.html('<div class="text-center py-3"><small style="color: var(--gray);">No suggestions yet</small></div>');
+                    return;
+                }
+                var html = '';
+                users.forEach(function (u) {
+                    html += '<div class="d-flex align-items-center justify-content-between mb-2 px-2">' +
+                        '<div class="d-flex align-items-center gap-2" style="cursor:pointer;" onclick="viewUserProfile(' + u.id + ')">' +
+                        '<img src="https://randomuser.me/api/portraits/men/' + (u.id % 50 + 1) + '.jpg" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">' +
+                        '<div><strong style="font-size:0.85rem;">' + u.name + '</strong><small style="color:var(--gray);display:block;font-size:0.7rem;">' + u.followerCount + ' followers</small></div>' +
+                        '</div>' +
+                        '<button class="btn btn-sm btn-outline-custom" id="suggestFollow_' + u.id + '" onclick="suggestFollow(' + u.id + ')" style="font-size:0.75rem;padding:2px 10px;">+ Follow</button>' +
+                        '</div>';
+                });
+                list.html(html);
+            }).fail(function () { $('#suggestedChefsList').html('<div class="text-center py-3"><small style="color: var(--gray);">No suggestions yet</small></div>'); });
+        }
+
+        function loadComments(recipeId, authorId) {
+            $.get(API + '/api/recipes/' + recipeId + '/reviews').done(function (reviews) {
+                var html = '';
+                $('#commentsCount_' + recipeId).text('(' + reviews.length + ')');
+                if (!reviews.length) {
+                    html = '<small style="color:var(--gray);">No comments yet. Be the first!</small>';
+                } else {
+                    reviews.forEach(function (rev) {
+                        var canDelete = currentUser && (rev.user_id === currentUser.id || authorId === currentUser.id || currentUser.role === 'admin');
+                        var stars = '';
+                        for (var i = 1; i <= 5; i++) stars += i <= rev.rating ? '<i class="fas fa-star" style="color:#ffc107;font-size:0.75rem;"></i>' : '<i class="far fa-star" style="color:#ddd;font-size:0.75rem;"></i>';
+                        html += '<div class="d-flex gap-2 mb-2 p-2" style="background:var(--light-bg);border-radius:8px;">' +
+                            '<div style="flex:1;">' +
+                            '<strong style="font-size:0.85rem;">' + (rev.user_name || 'Anonymous') + '</strong> ' + stars +
+                            '<p style="margin:2px 0 0;font-size:0.85rem;color:#555;">' + (rev.comment || '') + '</p>' +
+                            '<small style="color:#aaa;font-size:0.7rem;">' + new Date(rev.created_at).toLocaleDateString() + '</small>' +
+                            '</div>' +
+                            (canDelete ? '<a onclick="deleteComment(' + rev.id + ', ' + recipeId + ', ' + authorId + ')" title="Delete comment" style="cursor:pointer;color:var(--gray);font-size:0.85rem;align-self:flex-start;opacity:0.5;" onmouseover="this.style.opacity=\'1\'" onmouseout="this.style.opacity=\'0.5\'"><i class="fas fa-times"></i></a>' : '') +
+                            '</div>';
+                    });
+                }
+                $('#commentsContainer_' + recipeId).html(html);
+            }).fail(function () {
+                $('#commentsContainer_' + recipeId).html('<small style="color:var(--gray);">Failed to load comments.</small>');
+            });
+        }
+
+        function postComment(recipeId, authorId) {
+            var input = $('#commentInput_' + recipeId);
+            var rating = parseInt($('#ratingVal_' + recipeId).val()) || 5;
+            var comment = input.val().trim();
+            if (!comment) return;
+            var container = $('#commentsContainer_' + recipeId);
+            var emptyMsg = container.find('small:contains("No comments")');
+            if (emptyMsg.length) container.empty();
+            var stars = '';
+            for (var i = 1; i <= 5; i++) stars += i <= rating ? '<i class="fas fa-star" style="color:#ffc107;font-size:0.75rem;"></i>' : '<i class="far fa-star" style="color:#ddd;font-size:0.75rem;"></i>';
+            container.prepend(
+                '<div class="d-flex gap-2 mb-2 p-2" style="background:var(--light-bg);border-radius:8px;">' +
+                '<div style="flex:1;">' +
+                '<strong style="font-size:0.85rem;">' + (currentUser ? currentUser.name : 'You') + '</strong> ' + stars +
+                '<p style="margin:2px 0 0;font-size:0.85rem;color:#555;">' + comment + '</p>' +
+                '<small style="color:#aaa;font-size:0.7rem;">Just now</small>' +
+                '</div></div>'
+            );
+            var countEl = $('#commentsCount_' + recipeId);
+            var curr = parseInt(countEl.text().replace(/[()]/g,'')) || 0;
+            countEl.text('(' + (curr + 1) + ')');
+            input.val('');
+            var starsEl = $('#starRating_' + recipeId);
+            starsEl.find('input').val(5);
+            starsEl.find('i').each(function () {
+                var sv = parseInt($(this).data('val'));
+                $(this).toggleClass('fas', sv <= 5).toggleClass('far', sv > 5);
+            });
+            $.post(API + '/api/recipes/' + recipeId + '/reviews', { rating: rating, comment: comment })
+                .fail(function () { loadComments(recipeId, authorId); });
+        }
+
+        var pendingDelete = null;
+        function deleteComment(reviewId, recipeId, authorId) {
+            pendingDelete = { reviewId: reviewId, recipeId: recipeId, authorId: authorId };
+            $('#deleteCommentModal').modal('show');
+        }
+
+        $('#confirmDeleteCommentBtn').on('click', function () {
+            if (!pendingDelete) return;
+            var revId = pendingDelete.reviewId, rId = pendingDelete.recipeId, aId = pendingDelete.authorId;
+            pendingDelete = null;
+            $('#deleteCommentModal').modal('hide');
+            $.ajax({ url: API + '/api/reviews/' + revId, method: 'DELETE' })
+                .done(function () { loadComments(rId, aId); })
+                .fail(function () { alert('Failed to delete comment'); });
+        });
+
+        function toggleLike(recipeId) {
+            $.post(API + '/api/recipes/' + recipeId + '/like').done(function (res) {
+                var idx = likedRecipeIds.indexOf(recipeId);
+                if (res.liked) {
+                    if (idx === -1) likedRecipeIds.push(recipeId);
+                } else {
+                    if (idx > -1) likedRecipeIds.splice(idx, 1);
+                }
+                $('#likeCount_' + recipeId).text(res.like_count);
+                loadFeed(currentFilter);
+            }).fail(function () { alert('Failed to like'); });
+        }
+
+        function loadUserProfile() {
+            $.get(API + '/api/users/me/profile').done(function (profile) {
+                $('#recipeCount').text(profile.recipeCount);
+                $('#followerCount').text(profile.followerCount);
+                $('#followingCount').text(profile.followingCount);
+            });
+        }
+
+        $(document).on('click', '.star-rating i', function () {
+            var val = parseInt($(this).data('val'));
+            var container = $(this).closest('.star-rating');
+            container.find('input').val(val);
+            container.find('i').each(function () {
+                var starVal = parseInt($(this).data('val'));
+                if (starVal <= val) {
+                    $(this).removeClass('far').addClass('fas');
+                } else {
+                    $(this).removeClass('fas').addClass('far');
+                }
+            });
+        });
+
+        $('#confirmLogoutBtn').on('click', function () {
+            $.post(API + '/api/logout', function () { window.location.href = '/index.html'; });
+        });
+
+        function loadNotifCount() {
+            $.get(API + '/api/notifications/unread/count').done(function (res) {
+                var badge = $('#notifBadge');
+                if (res.count > 0) { badge.text(res.count).show(); }
+                else { badge.hide(); }
+            });
+        }
+
+        function loadNotifications() {
+            $('#notifOverlay').show();
+            var panel = $('#notifPanel');
+            panel.toggle();
+            if (!panel.is(':visible')) { $('#notifOverlay').hide(); return; }
+            $('#notifList').html('<small style="color:var(--gray);">Loading...</small>');
+            $.get(API + '/api/notifications').done(function (notifs) {
+                var html = '';
+                if (!notifs.length) { html = '<small style="color:var(--gray);">No notifications yet.</small>'; }
+                else {
+                    notifs.forEach(function (n) {
+                        var msg = n.actor_name + ' ';
+                        if (n.type === 'follow') msg += 'followed you';
+                        else if (n.type === 'like') msg += 'liked your recipe';
+                        else if (n.type === 'comment') msg += 'commented on your recipe';
+                        else if (n.type === 'new_recipe') msg += 'shared a new recipe';
+                        html += '<div class="notif-item" data-link="' + (n.link || '') + '" style="cursor:pointer;padding:8px 0;border-bottom:1px solid #f0f0f0;' + (!n.is_read ? 'background:#fff5f5;margin:0 -15px;padding:8px 15px;' : '') + '">' +
+                            '<div style="font-size:0.85rem;">' + msg + '</div>' +
+                            '<small style="color:#aaa;font-size:0.7rem;">' + new Date(n.created_at).toLocaleDateString() + '</small>' +
+                            '</div>';
+                    });
+                }
+                $('#notifList').html(html);
+                loadNotifCount();
+            }).fail(function () { $('#notifList').html('<small style="color:var(--gray);">Failed to load.</small>'); });
+        }
+
+        $(document).on('click', '.notif-item', function () {
+            var link = $(this).data('link');
+            if (link) {
+                $('#notifPanel').hide();
+                $('#notifOverlay').hide();
+                try { eval(link); } catch (e) {}
+                $.post(API + '/api/notifications/read');
+                $('#notifBadge').hide();
+            }
+        });
+
+        function markNotifRead() {
+            $.post(API + '/api/notifications/read').done(function () {
+                $('#notifBadge').hide();
+                $('#notifList').find('div').css({background:'transparent',margin:'0',padding:'8px 0'});
+            });
+        }
+
+        $(document).ready(function () {
+            $.get(API + '/api/me').done(function (user) {
+                currentUser = user;
+                $('#userName').text(user.name);
+                $('#userEmail').text(user.email);
+                $('#sideUserName').text(user.name);
+                $('#sideUserEmail').text(user.email);
+                $('#welcomeName').text(user.name.split(' ')[0]);
+                // Load following IDs and liked recipe IDs first, then feed
+                $.when(
+                    $.get(API + '/api/users/me/following/ids').done(function (ids) { followingIds = ids; }),
+                    $.get(API + '/api/recipes/liked/ids').done(function (ids) { likedRecipeIds = ids; })
+                ).always(function () {
+                    loadFeed('all');
+                });
+                loadCategories();
+                loadUserProfile();
+                loadSuggestedChefs();
+                loadFollowers();
+
+                // Check if editing from URL param
+                var editId = new URL(window.location.href).searchParams.get('edit');
+                if (editId) editRecipe(editId);
+
+            }).fail(function () {
+                window.location.href = '/pages/login.html';
+            });
+        });
+
+        $('#saveRecipeBtn').off('click').on('click', function () {
+            var id = $('#recipeId').val();
+            var fd = new FormData();
+            fd.append('title', $('#recipeTitle').val());
+            fd.append('description', $('#recipeDescription').val());
+            fd.append('category_id', $('#recipeCategory').val());
+            fd.append('ingredients', $('#recipeIngredients').val());
+            fd.append('instructions', $('#recipeInstructions').val());
+            var fileInput = $('#recipeImage')[0].files[0];
+            if (fileInput) {
+                fd.append('image', fileInput);
+            }
+            if (!fd.get('title')) { alert('Title is required'); return; }
+
+            var btn = $(this);
+            btn.html('<span class="spinner-border spinner-border-sm me-2"></span>Saving...').prop('disabled', true);
+            var url = API + '/api/recipes' + (id ? '/' + id : '');
+            var method = id ? 'PUT' : 'POST';
+
+            $.ajax({ url: url, method: method, data: fd, processData: false, contentType: false })
+                .done(function () {
+                    $('#recipeModal').modal('hide');
+                    loadFeed(currentFilter);
+                })
+                .fail(function (xhr) {
+                    var err = xhr.responseJSON ? xhr.responseJSON.error : 'Failed to save recipe';
+                    alert(err);
+                })
+                .always(function () {
+                    btn.html(id ? '<i class="fas fa-save me-2"></i>Update Recipe' : '<i class="fas fa-save me-2"></i>Save Recipe').prop('disabled', false);
+                });
         });
     </script>
 </body>

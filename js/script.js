@@ -1,3 +1,6 @@
+var API = (location.hostname === '127.0.0.1' || location.hostname === 'localhost') && location.port !== '3000' ? 'http://localhost:3000' : '';
+$.ajaxSetup({ xhrFields: { withCredentials: true } });
+
 $(document).ready(function () {
 
     // ===== ACTIVE NAV LINK =====
@@ -105,7 +108,7 @@ $(document).ready(function () {
 
         if (valid) {
             $('#loginBtn').html('<span class="spinner-border spinner-border-sm me-2"></span>Signing In...').prop('disabled', true);
-            $.post('/api/login', { email: email, password: password })
+            $.post(API + '/api/login', { email: email, password: password })
                 .done(function (user) {
                     if (user.role === 'admin') {
                         window.location.href = '/admin/dashboard.html';
@@ -148,7 +151,7 @@ $(document).ready(function () {
 
         if (valid) {
             $('#registerBtn').html('<span class="spinner-border spinner-border-sm me-2"></span>Creating Account...').prop('disabled', true);
-            $.post('/api/register', { name: name, email: email, password: password })
+            $.post(API + '/api/register', { name: name, email: email, password: password })
                 .done(function () {
                     window.location.href = '/user/dashboard.html';
                 })
@@ -214,6 +217,7 @@ $(document).ready(function () {
     // ===== COUNTER ANIMATION =====
     function animateCounter(el) {
         var target = parseInt($(el).data('target'));
+        if (!target) { $(el).text(0); return; }
         var speed = 50;
         var current = 0;
         var increment = Math.ceil(target / speed);
@@ -228,8 +232,14 @@ $(document).ready(function () {
         }, 30);
     }
 
-    $('.counter').each(function () {
-        animateCounter(this);
+    $.get(API + '/api/stats').done(function (stats) {
+        $('.counter[data-stat="recipes"]').data('target', stats.recipes);
+        $('.counter[data-stat="users"]').data('target', stats.users);
+        $('.counter[data-stat="chefs"]').data('target', stats.chefs);
+    }).always(function () {
+        $('.counter').each(function () {
+            animateCounter(this);
+        });
     });
 
     // ===== BACK TO TOP =====

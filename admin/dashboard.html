@@ -22,7 +22,7 @@
             <li><a href="#"><i class="fas fa-star"></i> Reviews</a></li>
             <li><a href="#"><i class="fas fa-tags"></i> Categories</a></li>
             <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
-            <li class="logout"><a href="#" onclick="event.preventDefault(); $.post('/api/logout', function(){ window.location.href='/pages/login.html'; });"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            <li class="logout"><a href="#" onclick="event.preventDefault(); $.post(API+'/api/logout', function(){ window.location.href='/pages/login.html'; });"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </div>
 
@@ -33,7 +33,15 @@
         <header class="admin-header">
             <div class="admin-header-left">
                 <button class="sidebar-toggle"><i class="fas fa-bars"></i></button>
-                <h5>Dashboard</h5>
+                <div>
+                    <h5>Dashboard</h5>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb simple-breadcrumb">
+                            <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                            <li class="breadcrumb-item active">Admin Dashboard</li>
+                        </ol>
+                    </nav>
+                </div>
             </div>
             <div class="admin-header-right">
                 <div class="notif">
@@ -58,7 +66,7 @@
                     <div class="stat-card">
                         <div class="stat-icon red"><i class="fas fa-users"></i></div>
                         <div class="stat-info">
-                            <h4>0</h4>
+                            <h4 id="totalUsers">0</h4>
                             <p>Total Users</p>
                         </div>
                     </div>
@@ -67,7 +75,7 @@
                     <div class="stat-card">
                         <div class="stat-icon green"><i class="fas fa-book-open"></i></div>
                         <div class="stat-info">
-                            <h4>0</h4>
+                            <h4 id="totalRecipes">0</h4>
                             <p>Total Recipes</p>
                         </div>
                     </div>
@@ -105,13 +113,13 @@
                                 <th>Recipe</th>
                                 <th>Author</th>
                                 <th>Category</th>
-                                <th>Status</th>
+                                <th>Date</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="adminRecipesTable">
                             <tr>
-                                <td colspan="5" class="text-center py-4" style="color: var(--gray);">No recipes yet</td>
+                                <td colspan="5" class="text-center py-4" style="color: var(--gray);">Loading...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -131,12 +139,12 @@
                                 <th>User</th>
                                 <th>Email</th>
                                 <th>Status</th>
-                                <th>Joined</th>
+                                <th>Role</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="adminUsersTable">
                             <tr>
-                                <td colspan="4" class="text-center py-4" style="color: var(--gray);">No users yet</td>
+                                <td colspan="4" class="text-center py-4" style="color: var(--gray);">Loading...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -153,9 +161,55 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script src="../js/script.js"></script>
     <script>
-        $.get('/api/me').done(function (user) {
+        function loadAdminData() {
+            $.get(API + '/api/users', function (users) {
+                $('#totalUsers').text(users.length);
+                var tbody = $('#adminUsersTable');
+                if (tbody.length) {
+                    tbody.empty();
+                    users.forEach(function (u) {
+                        var roleBadge = u.role === 'admin' ? '<span class="status active">Admin</span>' : '<span class="status">User</span>';
+                        tbody.append('<tr><td>' + u.name + '</td><td>' + u.email + '</td><td>' + roleBadge + '</td><td>' + u.role + '</td></tr>');
+                    });
+                }
+            });
+
+            $.get(API + '/api/recipes', function (recipes) {
+                $('#totalRecipes').text(recipes.length);
+                var tbody = $('#adminRecipesTable');
+                tbody.empty();
+                if (recipes.length === 0) {
+                    tbody.append('<tr><td colspan="5" class="text-center py-4" style="color: var(--gray);">No recipes yet</td></tr>');
+                    return;
+                }
+                recipes.forEach(function (r) {
+                    var date = r.created_at ? new Date(r.created_at).toLocaleDateString() : '';
+                    tbody.append('<tr>' +
+                        '<td><strong>' + r.title + '</strong></td>' +
+                        '<td>' + (r.author_name || 'Unknown') + '</td>' +
+                        '<td>' + (r.category_name || 'Uncategorized') + '</td>' +
+                        '<td>' + date + '</td>' +
+                        '<td>' +
+                        '<a href="/pages/recipe-detail.html?id=' + r.id + '" class="btn btn-sm btn-outline-custom me-1"><i class="fas fa-eye"></i></a> ' +
+                        '<button class="btn btn-sm btn-danger" onclick="adminDeleteRecipe(' + r.id + ',\'' + r.title.replace(/'/g, "\\'") + '\')"><i class="fas fa-trash"></i></button>' +
+                        '</td>' +
+                        '</tr>');
+                });
+            });
+        }
+
+        function adminDeleteRecipe(id, title) {
+            if (confirm('Delete "' + title + '"?')) {
+                $.ajax({ url: API + '/api/recipes/' + id, method: 'DELETE' })
+                    .done(function () { loadAdminData(); })
+                    .fail(function () { alert('Failed to delete recipe'); });
+            }
+        }
+
+        $.get(API + '/api/me').done(function (user) {
             if (user.role !== 'admin') { window.location.href = '/pages/login.html'; return; }
             $('#adminName').text(user.name);
+            loadAdminData();
         }).fail(function () {
             window.location.href = '/pages/login.html';
         });

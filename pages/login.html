@@ -11,6 +11,12 @@
 <body>
 
     <section class="auth-page">
+        <nav aria-label="breadcrumb" class="auth-breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="../index.html"><i class="fas fa-home me-1"></i>Home</a></li>
+                <li class="breadcrumb-item active">Login</li>
+            </ol>
+        </nav>
         <div class="auth-card">
             <div class="auth-card-header">
                 <a href="../index.html" class="text-white text-decoration-none">
@@ -49,8 +55,7 @@
                 <div class="auth-divider"><span>or continue with</span></div>
 
                 <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary flex-fill"><i class="fab fa-google me-2"></i>Google</button>
-                    <button class="btn btn-outline-secondary flex-fill"><i class="fab fa-facebook-f me-2"></i>Facebook</button>
+                    <button class="btn btn-outline-secondary flex-fill" onclick="window.location.href=(location.port==='5500'?'http://localhost:3000':'')+'/auth/google'"><i class="fab fa-google me-2"></i>Google</button>
                 </div>
 
                 <div class="auth-footer">

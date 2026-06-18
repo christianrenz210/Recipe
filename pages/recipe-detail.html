@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chicken Adobo - RecipeShare</title>
+    <title id="pageTitle">Recipe - RecipeShare</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet">
@@ -20,7 +20,7 @@
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="recipes.html">Recipes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="recipes.html">Recipes</a></li>
                     <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
                     <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
                 </ul>
@@ -35,12 +35,12 @@
     <!-- ===== PAGE BANNER ===== -->
     <section class="page-banner">
         <div class="container">
-            <h1>Recipe Details</h1>
+            <h1 id="recipeTitle">Recipe Details</h1>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
                     <li class="breadcrumb-item"><a href="recipes.html">Recipes</a></li>
-                    <li class="breadcrumb-item active">Chicken Adobo</li>
+                    <li class="breadcrumb-item active" id="breadcrumbName">Recipe</li>
                 </ol>
             </nav>
         </div>
@@ -51,105 +51,45 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-8">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Chicken_adobo.jpg" alt="Chicken Adobo" class="main-img">
+                    <img id="recipeImage" src="" alt="" class="main-img">
 
                     <div class="recipe-info">
-                        <h1>Chicken Adobo</h1>
+                        <h1 id="detailTitle"></h1>
                         <div class="author-info">
-                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Chef Maria">
+                            <img id="authorAvatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Author">
                             <div>
-                                <strong>Chef Maria Santos</strong>
-                                <small>Published on June 17, 2026</small>
+                                <strong id="authorName"></strong>
+                                <small id="publishDate"></small>
                             </div>
                         </div>
-                        <div class="recipe-meta">
-                            <div class="meta-item">
-                                <i class="fas fa-clock"></i>
-                                <span>45 mins</span>
-                            </div>
-                            <div class="meta-item">
-                                <i class="fas fa-users"></i>
-                                <span>6 Servings</span>
-                            </div>
-                            <div class="meta-item">
-                                <i class="fas fa-signal"></i>
-                                <span>Easy</span>
-                            </div>
-                            <div class="meta-item">
-                                <i class="fas fa-star" style="color: #f39c12;"></i>
-                                <span>4.9 (256 reviews)</span>
-                            </div>
-                        </div>
+                        <div class="recipe-meta" id="recipeMeta"></div>
                     </div>
 
-                    <div class="instructions">
+                    <div id="recipeActions" class="d-flex gap-2 mb-4" style="display:none !important;">
+                        <button class="btn btn-warning" id="editRecipeBtn"><i class="fas fa-edit me-2"></i>Edit</button>
+                        <button class="btn btn-danger" id="deleteRecipeBtn"><i class="fas fa-trash me-2"></i>Delete</button>
+                    </div>
+
+                    <div class="instructions" id="instructionsContainer">
                         <h4>Step-by-Step Instructions</h4>
-                        <div class="step">
-                            <div class="step-num">1</div>
-                            <div>
-                                <strong>Marinate the chicken</strong>
-                                <p>In a large bowl, combine chicken thighs with soy sauce, crushed garlic, and crushed peppercorns. Let it marinate for at least 30 minutes to absorb the flavors.</p>
-                            </div>
-                        </div>
-                        <div class="step">
-                            <div class="step-num">2</div>
-                            <div>
-                                <strong>Sear the chicken</strong>
-                                <p>Heat cooking oil in a large pot over medium-high heat. Remove chicken from the marinade (reserve the liquid) and sear each piece until golden brown on both sides.</p>
-                            </div>
-                        </div>
-                        <div class="step">
-                            <div class="step-num">3</div>
-                            <div>
-                                <strong>Simmer in adobo sauce</strong>
-                                <p>Pour the reserved marinade, vinegar, bay leaves, and water into the pot. Do not stir. Bring to a boil without stirring to cook out the vinegar's sharpness.</p>
-                            </div>
-                        </div>
-                        <div class="step">
-                            <div class="step-num">4</div>
-                            <div>
-                                <strong>Slow cook until tender</strong>
-                                <p>Reduce heat to low, cover, and simmer for 30-40 minutes or until the chicken is tender and the sauce has reduced to half. Stir occasionally.</p>
-                            </div>
-                        </div>
-                        <div class="step">
-                            <div class="step-num">5</div>
-                            <div>
-                                <strong>Serve and enjoy</strong>
-                                <p>Transfer to a serving plate and pour the remaining sauce on top. Serve hot with steamed rice and enjoy your authentic Filipino Chicken Adobo!</p>
-                            </div>
-                        </div>
+                        <div id="instructionsList"></div>
                     </div>
                 </div>
 
                 <div class="col-lg-4">
                     <div class="ingredients-box">
                         <h4>Ingredients</h4>
-                        <ul class="list-unstyled">
-                            <li>1 kg chicken thighs or drumsticks</li>
-                            <li>1/2 cup soy sauce</li>
-                            <li>1/2 cup vinegar (cane or white)</li>
-                            <li>6 cloves garlic, crushed</li>
-                            <li>1 tsp whole black peppercorns</li>
-                            <li>3 pieces dried bay leaves</li>
-                            <li>1 cup water</li>
-                            <li>2 tbsp cooking oil</li>
-                            <li>Steamed rice for serving</li>
-                        </ul>
+                        <ul class="list-unstyled" id="ingredientsList"></ul>
                     </div>
 
-                    <div class="contact-info-card">
+                    <div id="tipsBox" class="contact-info-card" style="display:none;">
                         <h5 class="mb-3"><i class="fas fa-heart me-2 text-danger"></i> Chef's Tips</h5>
-                        <ul class="list-unstyled">
-                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Do not stir after adding vinegar — let it boil first to remove the raw taste.</li>
-                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Use cane vinegar (sukang Iloko) for authentic flavor.</li>
-                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Add a pinch of sugar to balance the sourness and saltiness.</li>
-                        </ul>
+                        <ul class="list-unstyled" id="tipsList"></ul>
                     </div>
 
-                    <div class="d-flex gap-2 mb-3">
-                        <button class="btn btn-primary-custom flex-fill"><i class="fas fa-bookmark me-2"></i>Save Recipe</button>
-                        <button class="btn btn-outline-custom flex-fill"><i class="fas fa-share-alt me-2"></i>Share</button>
+                    <div id="detailDescription" class="contact-info-card">
+                        <h5 class="mb-3"><i class="fas fa-info-circle me-2" style="color:var(--primary);"></i> About this Recipe</h5>
+                        <p id="descriptionText" style="color: var(--gray);"></p>
                     </div>
                 </div>
             </div>
@@ -160,64 +100,7 @@
                     <h2>Related Recipes</h2>
                     <p>You might also enjoy these dishes</p>
                 </div>
-                    <div class="row">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="recipe-card">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Sinigang_na_baboy.jpg" alt="Sinigang">
-                            <div class="recipe-card-body">
-                                <span class="category">Dinner</span>
-                                <h5>Sinigang na Baboy</h5>
-                                <p>Savory sour tamarind soup with tender pork ribs and fresh veggies.</p>
-                            </div>
-                            <div class="recipe-card-footer">
-                                <span><i class="far fa-clock"></i> 60 mins</span>
-                                <span class="rating"><i class="fas fa-star"></i> 4.8</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="recipe-card">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Lechon_liempo_%28pork_belly_lechon%29_Philippines.jpg/500px-Lechon_liempo_%28pork_belly_lechon%29_Philippines.jpg" alt="Lechon Kawali">
-                            <div class="recipe-card-body">
-                                <span class="category">Dinner</span>
-                                <h5>Lechon Kawali</h5>
-                                <p>Deep-fried crispy pork belly with spicy vinegar dipping sauce.</p>
-                            </div>
-                            <div class="recipe-card-footer">
-                                <span><i class="far fa-clock"></i> 90 mins</span>
-                                <span class="rating"><i class="fas fa-star"></i> 4.9</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="recipe-card">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/Pancit_Guidado.jpg" alt="Pancit">
-                            <div class="recipe-card-body">
-                                <span class="category">Lunch</span>
-                                <h5>Pancit Canton</h5>
-                                <p>Stir-fried egg noodles with chicken, veggies, and calamansi.</p>
-                            </div>
-                            <div class="recipe-card-footer">
-                                <span><i class="far fa-clock"></i> 30 mins</span>
-                                <span class="rating"><i class="fas fa-star"></i> 4.7</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="recipe-card">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Halu-halo.jpg" alt="Halo-Halo">
-                            <div class="recipe-card-body">
-                                <span class="category">Dessert</span>
-                                <h5>Halo-Halo</h5>
-                                <p>Refreshing shaved ice dessert with sweet toppings and ube ice cream.</p>
-                            </div>
-                            <div class="recipe-card-footer">
-                                <span><i class="far fa-clock"></i> 15 mins</span>
-                                <span class="rating"><i class="fas fa-star"></i> 4.7</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="row" id="relatedRecipes"></div>
             </div>
         </div>
     </section>
@@ -272,5 +155,109 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script src="../js/script.js"></script>
+    <script>
+        function getQueryParam(name) {
+            var url = new URL(window.location.href);
+            return url.searchParams.get(name);
+        }
+
+        $(document).ready(function () {
+            var id = getQueryParam('id');
+            if (!id) { $('#detailTitle').text('Recipe not found'); return; }
+
+            $.get(API + '/api/recipes/' + id, function (r) {
+                document.title = r.title + ' - RecipeShare';
+                $('#pageTitle').text(r.title + ' - RecipeShare');
+                $('#recipeTitle').text(r.title);
+                $('#breadcrumbName').text(r.title);
+                $('#detailTitle').text(r.title);
+                $('#recipeImage').attr('src', r.image || 'https://via.placeholder.com/800x450?text=No+Image').attr('alt', r.title);
+                $('#authorName').text(r.author_name || 'Unknown');
+                $('#publishDate').text(r.created_at ? 'Published on ' + new Date(r.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '');
+
+                var metaHtml = '';
+                var metaItems = [
+                    { icon: 'fa-clock', label: '30 mins' },
+                    { icon: 'fa-users', label: '4 Servings' },
+                    { icon: 'fa-signal', label: 'Easy' }
+                ];
+                metaItems.forEach(function (m) {
+                    metaHtml += '<div class="meta-item"><i class="fas ' + m.icon + '"></i><span>' + m.label + '</span></div>';
+                });
+                $('#recipeMeta').html(metaHtml);
+
+                // Description
+                $('#descriptionText').text(r.description || 'No description available.');
+
+                // Ingredients
+                var ingHtml = '';
+                if (r.ingredients) {
+                    r.ingredients.split('\n').forEach(function (line) {
+                        if (line.trim()) ingHtml += '<li><i class="fas fa-check-circle text-success me-2"></i>' + line.trim() + '</li>';
+                    });
+                }
+                $('#ingredientsList').html(ingHtml || '<li class="text-muted">No ingredients listed.</li>');
+
+                // Instructions
+                var instHtml = '';
+                if (r.instructions) {
+                    var steps = r.instructions.split('\n');
+                    steps.forEach(function (line, idx) {
+                        if (line.trim()) {
+                            var stepNum = idx + 1;
+                            var text = line.trim().replace(/^\d+[\.\)]\s*/, '');
+                            instHtml += '<div class="step"><div class="step-num">' + stepNum + '</div><div><strong>Step ' + stepNum + '</strong><p>' + text + '</p></div></div>';
+                        }
+                    });
+                }
+                $('#instructionsList').html(instHtml || '<p class="text-muted">No instructions provided.</p>');
+
+                // Show edit/delete if logged in as author or admin
+                $.get(API + '/api/me').done(function (user) {
+                    if (user.id === r.author_id || user.role === 'admin') {
+                        $('#recipeActions').show();
+                        $('#editRecipeBtn').off('click').on('click', function () {
+                            window.location.href = '/user/dashboard.html?edit=' + r.id;
+                        });
+                        $('#deleteRecipeBtn').off('click').on('click', function () {
+                            if (confirm('Delete "' + r.title + '"?')) {
+                                $.ajax({ url: API + '/api/recipes/' + r.id, method: 'DELETE' })
+                                    .done(function () { window.location.href = 'recipes.html'; })
+                                    .fail(function () { alert('Failed to delete recipe'); });
+                            }
+                        });
+                    }
+                });
+
+            }).fail(function () {
+                $('#detailTitle').text('Recipe not found');
+            });
+
+            // Load related recipes
+            $.get(API + '/api/recipes', function (recipes) {
+                var related = $('#relatedRecipes');
+                var others = recipes.filter(function (r) { return r.id != id; }).slice(0, 4);
+                if (others.length === 0) { related.parent().hide(); return; }
+                others.forEach(function (r) {
+                    var desc = (r.description || '').substring(0, 80);
+                    if (r.description && r.description.length > 80) desc += '...';
+                    var card = '<div class="col-lg-3 col-md-6">' +
+                        '<div class="recipe-card">' +
+                        '<img src="' + (r.image || 'https://via.placeholder.com/400x250?text=No+Image') + '" alt="' + r.title + '">' +
+                        '<div class="recipe-card-body">' +
+                        '<span class="category">' + (r.category_name || '') + '</span>' +
+                        '<h5>' + r.title + '</h5>' +
+                        '<p>' + desc + '</p>' +
+                        '</div>' +
+                        '<div class="recipe-card-footer">' +
+                        '<a href="recipe-detail.html?id=' + r.id + '" class="btn btn-sm btn-outline-custom">View</a>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>';
+                    related.append(card);
+                });
+            });
+        });
+    </script>
 </body>
 </html>
