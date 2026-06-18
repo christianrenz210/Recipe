@@ -252,6 +252,7 @@ app.post('/api/users/:id/follow', requireAuth, async (req, res) => {
         const following = (await db.prepare('SELECT COUNT(*) as c FROM follows WHERE follower_id = ?').get(req.session.user.id)).c;
         res.json({ ok: true, following });
     } catch (e) {
+        console.error('Follow error:', e);
         res.status(500).json({ error: 'Failed to follow' });
     }
 });
