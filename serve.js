@@ -7,7 +7,16 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const multer = require('multer');
 const fs = require('fs');
 const { getDb, initDb } = require('./database');
-const config = require('./config.json');
+
+let config = { google: {} };
+try {
+    config = require('./config.json');
+} catch (e) {
+    config.google = {
+        clientID: process.env.GOOGLE_CLIENT_ID || '',
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET || ''
+    };
+}
 
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
