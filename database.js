@@ -154,6 +154,18 @@ async function initDb() {
                 created_at TIMESTAMP NOT NULL DEFAULT NOW()
             );
         `);
+
+        try {
+            const colCheck = await db.prepare(
+                "SELECT column_name FROM information_schema.columns WHERE table_name = 'users' AND column_name = 'google_id'"
+            ).get();
+            if (!colCheck) {
+                await db.exec("ALTER TABLE users ADD COLUMN google_id TEXT UNIQUE");
+                console.log('Migrated: added google_id column to users table (pg)');
+            }
+        } catch (e) {
+            console.log('Migration check for google_id failed (may already exist):', e.message);
+        }
     } else {
         db.exec(`
             CREATE TABLE IF NOT EXISTS users (
