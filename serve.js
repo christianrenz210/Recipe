@@ -521,6 +521,15 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+app.use((err, req, res, next) => {
+    console.error('Unhandled error:', err);
+    if (req.path.startsWith('/api/')) {
+        res.status(500).json({ error: err.message || 'Internal server error' });
+    } else {
+        res.status(500).send('Internal server error');
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`RecipeShare server running at http://localhost:${PORT}`);
 });

@@ -522,9 +522,9 @@
                 });
             }).fail(function (xhr) {
                 var msg = 'Failed to load feed';
-                try { msg = xhr.responseJSON ? xhr.responseJSON.error : xhr.statusText || msg; } catch (e) {}
-                console.error(msg);
-                $('#myRecipesContainer').html('<div class="feed-card text-center py-5"><p style="color:var(--gray);">Failed to load recipes. <button class="btn btn-sm btn-outline-custom" onclick="loadFeed(currentFilter)">Retry</button></p></div>');
+                try { msg = xhr.responseJSON ? xhr.responseJSON.error : (xhr.responseText || xhr.statusText || msg); } catch (e) {}
+                console.error('Feed error:', msg, xhr.status);
+                $('#myRecipesContainer').html('<div class="feed-card text-center py-5"><p style="color:var(--gray);">' + msg + ' <button class="btn btn-sm btn-outline-custom" onclick="loadFeed(currentFilter)">Retry</button></p></div>');
             });
         }
 
