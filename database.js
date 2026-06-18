@@ -271,14 +271,14 @@ async function initDb() {
     }
 
     const userCount = (await db.prepare('SELECT COUNT(*) as count FROM users').get()).count;
-    if (userCount === 0) {
+    if (userCount == 0) {
         const insertUser = db.prepare('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)');
         await insertUser.run('Admin User', 'admin@email.com', 'admin123', 'admin');
         await insertUser.run('Maria Santos', 'user@email.com', 'user123', 'user');
     }
 
     const catCount = (await db.prepare('SELECT COUNT(*) as count FROM categories').get()).count;
-    if (catCount === 0) {
+    if (catCount == 0) {
         const insertCat = db.prepare('INSERT INTO categories (name, slug) VALUES (?, ?)');
         await insertCat.run('Breakfast', 'breakfast');
         await insertCat.run('Lunch', 'lunch');
@@ -290,7 +290,7 @@ async function initDb() {
 
     const recipeCount = (await db.prepare('SELECT COUNT(*) as count FROM recipes').get()).count;
     const seedAuthor = await db.prepare("SELECT id FROM users WHERE email = 'admin@email.com'").get();
-    if (recipeCount === 0 && seedAuthor) {
+    if (recipeCount == 0 && seedAuthor) {
         const insertRecipe = db.prepare(
             `INSERT INTO recipes (title, description, ingredients, instructions, image, category_id, author_id)
              VALUES (?, ?, ?, ?, ?, ?, ?)`
