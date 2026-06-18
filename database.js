@@ -181,6 +181,30 @@ async function initDb() {
                 console.log(`Migration check for ${table}.recipe_id failed:`, e.message);
             }
         }
+
+        // Ensure notifications table has recipe_id and link columns
+        try {
+            const col = await db.prepare(
+                "SELECT column_name FROM information_schema.columns WHERE table_name = 'notifications' AND column_name = 'recipe_id'"
+            ).get();
+            if (!col) {
+                await db.exec("ALTER TABLE notifications ADD COLUMN recipe_id INTEGER REFERENCES recipes(id)");
+                console.log('Migrated: added recipe_id column to notifications table (pg)');
+            }
+        } catch (e) {
+            console.log('Migration check for notifications.recipe_id failed:', e.message);
+        }
+        try {
+            const col = await db.prepare(
+                "SELECT column_name FROM information_schema.columns WHERE table_name = 'notifications' AND column_name = 'link'"
+            ).get();
+            if (!col) {
+                await db.exec("ALTER TABLE notifications ADD COLUMN link TEXT");
+                console.log('Migrated: added link column to notifications table (pg)');
+            }
+        } catch (e) {
+            console.log('Migration check for notifications.link failed:', e.message);
+        }
     } else {
         db.exec(`
             CREATE TABLE IF NOT EXISTS users (
