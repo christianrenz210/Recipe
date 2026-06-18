@@ -166,6 +166,21 @@ async function initDb() {
         } catch (e) {
             console.log('Migration check for google_id failed (may already exist):', e.message);
         }
+
+        // Ensure reviews and likes tables have recipe_id column
+        for (const table of ['reviews', 'likes']) {
+            try {
+                const col = await db.prepare(
+                    `SELECT column_name FROM information_schema.columns WHERE table_name = '${table}' AND column_name = 'recipe_id'`
+                ).get();
+                if (!col) {
+                    await db.exec(`ALTER TABLE ${table} ADD COLUMN recipe_id INTEGER NOT NULL REFERENCES recipes(id)`);
+                    console.log(`Migrated: added recipe_id column to ${table} table (pg)`);
+                }
+            } catch (e) {
+                console.log(`Migration check for ${table}.recipe_id failed:`, e.message);
+            }
+        }
     } else {
         db.exec(`
             CREATE TABLE IF NOT EXISTS users (
