@@ -171,7 +171,7 @@
                 $('#recipeTitle').text(r.title);
                 $('#breadcrumbName').text(r.title);
                 $('#detailTitle').text(r.title);
-                $('#recipeImage').attr('src', r.image || 'https://via.placeholder.com/800x450?text=No+Image').attr('alt', r.title);
+                $('#recipeImage').attr('src', r.image || 'https://placehold.co/800x450/eee/aaa?text=No+Image').attr('alt', r.title);
                 $('#authorName').text(r.author_name || 'Unknown');
                 $('#publishDate').text(r.created_at ? 'Published on ' + new Date(r.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '');
 
@@ -243,7 +243,7 @@
                     if (r.description && r.description.length > 80) desc += '...';
                     var card = '<div class="col-lg-3 col-md-6">' +
                         '<div class="recipe-card">' +
-                        '<img src="' + (r.image || 'https://via.placeholder.com/400x250?text=No+Image') + '" alt="' + r.title + '">' +
+                        '<img src="' + (r.image || 'https://placehold.co/400x250/eee/aaa?text=No+Image') + '" alt="' + r.title + '">' +
                         '<div class="recipe-card-body">' +
                         '<span class="category">' + (r.category_name || '') + '</span>' +
                         '<h5>' + r.title + '</h5>' +

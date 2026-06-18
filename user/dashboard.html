@@ -498,7 +498,7 @@
                     var card = '<div class="feed-card">' +
                         '<div class="row g-0">' +
                         '<div class="col-md-4">' +
-                        '<img src="' + (r.image || 'https://via.placeholder.com/400x250?text=No+Image') + '" class="feed-img" style="height:100%;object-fit:cover;" alt="' + r.title + '">' +
+                        '<img src="' + (r.image || 'https://placehold.co/400x250/eee/aaa?text=No+Image') + '" class="feed-img" style="height:100%;object-fit:cover;" alt="' + r.title + '">' +
                         '</div>' +
                         '<div class="col-md-8">' +
                         '<div class="feed-body">' +
@@ -555,7 +555,7 @@
                     '<button class="btn btn-sm btn-outline-custom mb-3" onclick="backToMyRecipes()"><i class="fas fa-arrow-left me-1"></i>Back to My Recipes</button>' +
                     '<div class="row">' +
                     '<div class="col-md-5">' +
-                    '<img src="' + (r.image || 'https://via.placeholder.com/600x400?text=No+Image') + '" class="img-fluid rounded" style="width:100%;object-fit:cover;max-height:350px;" alt="' + r.title + '">' +
+                    '<img src="' + (r.image || 'https://placehold.co/600x400/eee/aaa?text=No+Image') + '" class="img-fluid rounded" style="width:100%;object-fit:cover;max-height:350px;" alt="' + r.title + '">' +
                     '</div>' +
                     '<div class="col-md-7">' +
                     '<h3 class="fw-bold">' + r.title + '</h3>' +
@@ -692,7 +692,7 @@
                     recipes.forEach(function (r) {
                         var desc = (r.description || '').substring(0, 120);
                         if (r.description && r.description.length > 120) desc += '...';
-                        recipeHtml += '<div class="feed-card"><div class="row g-0"><div class="col-md-4"><img src="' + (r.image || 'https://via.placeholder.com/400x250?text=No+Image') + '" class="feed-img" style="height:100%;object-fit:cover;" alt="' + r.title + '"></div><div class="col-md-8"><div class="feed-body"><h5 class="fw-bold">' + r.title + '</h5><p style="color:var(--gray);font-size:0.9rem;">' + desc + '</p><span class="badge" style="background:var(--light-bg);color:var(--primary);">' + (r.category_name || 'Uncategorized') + '</span><div class="mt-2"><button class="btn btn-sm btn-outline-custom" onclick="viewRecipeDetail(' + r.id + ')"><i class="fas fa-eye me-1"></i>View</button></div></div></div></div></div>';
+                        recipeHtml += '<div class="feed-card"><div class="row g-0"><div class="col-md-4"><img src="' + (r.image || 'https://placehold.co/400x250/eee/aaa?text=No+Image') + '" class="feed-img" style="height:100%;object-fit:cover;" alt="' + r.title + '"></div><div class="col-md-8"><div class="feed-body"><h5 class="fw-bold">' + r.title + '</h5><p style="color:var(--gray);font-size:0.9rem;">' + desc + '</p><span class="badge" style="background:var(--light-bg);color:var(--primary);">' + (r.category_name || 'Uncategorized') + '</span><div class="mt-2"><button class="btn btn-sm btn-outline-custom" onclick="viewRecipeDetail(' + r.id + ')"><i class="fas fa-eye me-1"></i>View</button></div></div></div></div></div>';
                     });
                     if (!recipes.length) recipeHtml = '<div class="text-center py-4"><small style="color:var(--gray);">No recipes yet</small></div>';
 
