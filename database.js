@@ -180,39 +180,6 @@ async function initDb() {
             console.log('Migrated: added google_id column to users table');
         }
 
-        const notifTableInfo = await db.prepare("PRAGMA table_info('notifications')").all();
-        if (!notifTableInfo.find(col => col.name === 'link')) {
-            db.exec("ALTER TABLE notifications ADD COLUMN link TEXT");
-            console.log('Migrated: added link column to notifications table');
-        }
-
-        try {
-            await db.prepare("INSERT INTO notifications (user_id, type, actor_id) VALUES (1, 'new_recipe', 1)").run();
-            await db.exec("DELETE FROM notifications WHERE type = 'new_recipe'");
-        } catch (e) {
-            console.log('Migrating notifications table to fix CHECK constraint...');
-            db.exec(`
-                CREATE TABLE notifications_new (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    user_id INTEGER NOT NULL,
-                    type TEXT NOT NULL CHECK(type IN ('follow', 'like', 'comment', 'new_recipe')),
-                    actor_id INTEGER NOT NULL,
-                    recipe_id INTEGER,
-                    link TEXT,
-                    is_read INTEGER NOT NULL DEFAULT 0,
-                    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-                    FOREIGN KEY (user_id) REFERENCES users(id),
-                    FOREIGN KEY (actor_id) REFERENCES users(id),
-                    FOREIGN KEY (recipe_id) REFERENCES recipes(id)
-                );
-                INSERT INTO notifications_new (id, user_id, type, actor_id, recipe_id, link, is_read, created_at)
-                    SELECT id, user_id, type, actor_id, recipe_id, link, is_read, created_at FROM notifications;
-                DROP TABLE notifications;
-                ALTER TABLE notifications_new RENAME TO notifications;
-            `);
-            console.log('Migrated: fixed notifications CHECK constraint');
-        }
-
         db.exec(`
             CREATE TABLE IF NOT EXISTS recipes (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -268,6 +235,39 @@ async function initDb() {
                 FOREIGN KEY (recipe_id) REFERENCES recipes(id)
             );
         `);
+
+        const notifTableInfo = await db.prepare("PRAGMA table_info('notifications')").all();
+        if (!notifTableInfo.find(col => col.name === 'link')) {
+            db.exec("ALTER TABLE notifications ADD COLUMN link TEXT");
+            console.log('Migrated: added link column to notifications table');
+        }
+
+        try {
+            await db.prepare("INSERT INTO notifications (user_id, type, actor_id) VALUES (1, 'new_recipe', 1)").run();
+            await db.exec("DELETE FROM notifications WHERE type = 'new_recipe'");
+        } catch (e) {
+            console.log('Migrating notifications table to fix CHECK constraint...');
+            db.exec(`
+                CREATE TABLE notifications_new (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    type TEXT NOT NULL CHECK(type IN ('follow', 'like', 'comment', 'new_recipe')),
+                    actor_id INTEGER NOT NULL,
+                    recipe_id INTEGER,
+                    link TEXT,
+                    is_read INTEGER NOT NULL DEFAULT 0,
+                    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                    FOREIGN KEY (user_id) REFERENCES users(id),
+                    FOREIGN KEY (actor_id) REFERENCES users(id),
+                    FOREIGN KEY (recipe_id) REFERENCES recipes(id)
+                );
+                INSERT INTO notifications_new (id, user_id, type, actor_id, recipe_id, link, is_read, created_at)
+                    SELECT id, user_id, type, actor_id, recipe_id, link, is_read, created_at FROM notifications;
+                DROP TABLE notifications;
+                ALTER TABLE notifications_new RENAME TO notifications;
+            `);
+            console.log('Migrated: fixed notifications CHECK constraint');
+        }
     }
 
     const userCount = (await db.prepare('SELECT COUNT(*) as count FROM users').get()).count;
