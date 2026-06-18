@@ -937,7 +937,12 @@
                 $(this).toggleClass('fas', sv <= 5).toggleClass('far', sv > 5);
             });
             $.post(API + '/api/recipes/' + recipeId + '/reviews', { rating: rating, comment: comment })
-                .fail(function () { loadComments(recipeId, authorId); });
+                .fail(function (xhr) {
+                    var errMsg = 'Failed to post comment';
+                    try { errMsg = xhr.responseJSON ? xhr.responseJSON.error : (xhr.responseText || errMsg); } catch (e) {}
+                    alert(errMsg);
+                    loadComments(recipeId, authorId);
+                });
         }
 
         var pendingDelete = null;
