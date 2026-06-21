@@ -526,6 +526,171 @@ app.post('/api/notifications/read', requireAuth, async (req, res) => {
     res.json({ ok: true });
 });
 
+// ===== MESSAGES / CONVERSATIONS =====
+
+// Track last_seen for conversation-related activity
+function trackSeen(req) {
+    try {
+        const db = getDb();
+        const uid = req.session.user.id;
+        db.prepare("UPDATE users SET last_seen = datetime('now') WHERE id = ?").run(uid);
+    } catch (e) { /* silently fail */ }
+}
+
+app.get('/api/conversations', requireAuth, async (req, res) => {
+    const db = getDb();
+    const uid = req.session.user.id;
+    trackSeen(req);
+    const convos = await db.prepare(`
+        SELECT c.*,
+            u1.name as p1_name, u2.name as p2_name,
+            u1.last_seen as p1_last_seen, u2.last_seen as p2_last_seen,
+            (SELECT content FROM messages WHERE conversation_id = c.id ORDER BY created_at DESC LIMIT 1) as last_message,
+            (SELECT created_at FROM messages WHERE conversation_id = c.id ORDER BY created_at DESC LIMIT 1) as last_message_at,
+            (SELECT COUNT(*) FROM messages WHERE conversation_id = c.id AND sender_id != ? AND is_read = 0) as unread_count
+        FROM conversations c
+        JOIN users u1 ON c.participant1_id = u1.id
+        JOIN users u2 ON c.participant2_id = u2.id
+        WHERE c.participant1_id = ? OR c.participant2_id = ?
+        ORDER BY last_message_at DESC
+    `).all(uid, uid, uid);
+    convos.forEach(c => {
+        const otherId = c.participant1_id === uid ? c.participant2_id : c.participant1_id;
+        const otherName = c.participant1_id === uid ? c.p2_name : c.p1_name;
+        const otherLastSeen = c.participant1_id === uid ? c.p2_last_seen : c.p1_last_seen;
+        c.other_user_id = otherId;
+        c.other_user_name = otherName;
+        c.other_last_seen = otherLastSeen;
+    });
+    res.json(convos);
+});
+
+app.get('/api/conversations/unread/count', requireAuth, async (req, res) => {
+    const db = getDb();
+    const uid = req.session.user.id;
+    const row = await db.prepare(`
+        SELECT COUNT(*) as count FROM messages m
+        JOIN conversations c ON m.conversation_id = c.id
+        WHERE (c.participant1_id = ? OR c.participant2_id = ?)
+        AND m.sender_id != ? AND m.is_read = 0
+    `).get(uid, uid, uid);
+    res.json({ count: row.count || 0 });
+});
+
+app.get('/api/conversations/:id/messages', requireAuth, async (req, res) => {
+    const db = getDb();
+    const uid = req.session.user.id;
+    trackSeen(req);
+    const conv = await db.prepare(`
+        SELECT * FROM conversations WHERE id = ? AND (participant1_id = ? OR participant2_id = ?)
+    `).get(req.params.id, uid, uid);
+    if (!conv) return res.status(403).json({ error: 'Not a participant' });
+
+    const messages = await db.prepare(`
+        SELECT m.*, u.name as sender_name
+        FROM messages m
+        JOIN users u ON m.sender_id = u.id
+        WHERE m.conversation_id = ?
+        ORDER BY m.created_at ASC
+    `).all(req.params.id);
+
+    await db.prepare('UPDATE messages SET is_read = 1 WHERE conversation_id = ? AND sender_id != ?').run(req.params.id, uid);
+
+    res.json(messages);
+});
+
+const msgUpload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+
+app.post('/api/conversations/:id/messages', requireAuth, msgUpload.single('image'), async (req, res) => {
+    const db = getDb();
+    trackSeen(req);
+    const uid = req.session.user.id;
+    const content = req.body.content || '';
+    const image = req.file ? '/uploads/' + req.file.filename : null;
+    if (!content.trim() && !image) return res.status(400).json({ error: 'Message content or image is required' });
+
+    const conv = await db.prepare(`
+        SELECT * FROM conversations WHERE id = ? AND (participant1_id = ? OR participant2_id = ?)
+    `).get(req.params.id, uid, uid);
+    if (!conv) return res.status(403).json({ error: 'Not a participant' });
+
+    const result = await db.prepare('INSERT INTO messages (conversation_id, sender_id, content, image) VALUES (?, ?, ?, ?)')
+        .run(req.params.id, uid, content.trim() || null, image);
+
+    typingStatus.delete(req.params.id + ':' + uid);
+
+    const msg = await db.prepare(`
+        SELECT m.*, u.name as sender_name
+        FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.id = ?
+    `).get(result.lastInsertRowid);
+
+    res.status(201).json(msg);
+});
+
+// ===== TYPING INDICATOR =====
+const typingStatus = new Map();
+
+app.post('/api/conversations/:id/typing', requireAuth, async (req, res) => {
+    const uid = req.session.user.id;
+    const key = req.params.id + ':' + uid;
+    typingStatus.set(key, Date.now());
+    res.json({ ok: true });
+});
+
+app.get('/api/conversations/:id/typing', requireAuth, async (req, res) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    res.set('Pragma', 'no-cache');
+    const db = getDb();
+    const uid = req.session.user.id;
+    const conv = await db.prepare('SELECT * FROM conversations WHERE id = ? AND (participant1_id = ? OR participant2_id = ?)').get(req.params.id, uid, uid);
+    if (!conv) return res.status(403).json({ error: 'Not a participant' });
+    const otherId = conv.participant1_id === uid ? conv.participant2_id : conv.participant1_id;
+    const key = req.params.id + ':' + otherId;
+    const lastTyping = typingStatus.get(key);
+    const typing = !!(lastTyping && Date.now() - lastTyping < 1200);
+    res.json({ typing: typing });
+});
+
+app.get('/api/users/search', requireAuth, async (req, res) => {
+    const db = getDb();
+    const uid = req.session.user.id;
+    const q = (req.query.q || '').trim();
+    let users;
+    if (q) {
+        users = await db.prepare(`
+            SELECT id, name, email, last_seen FROM users WHERE id != ? AND (name LIKE ? OR email LIKE ?) LIMIT 20
+        `).all(uid, '%' + q + '%', '%' + q + '%');
+    } else {
+        users = await db.prepare(`
+            SELECT u.id, u.name, u.email, u.last_seen,
+                (SELECT COUNT(*) FROM follows WHERE following_id = u.id) as followerCount
+            FROM users u WHERE u.id != ? ORDER BY followerCount DESC LIMIT 20
+        `).all(uid);
+    }
+    res.json(users);
+});
+
+app.post('/api/conversations', requireAuth, async (req, res) => {
+    const db = getDb();
+    const uid = req.session.user.id;
+    trackSeen(req);
+    const { userId } = req.body;
+    if (!userId) return res.status(400).json({ error: 'userId is required' });
+    if (userId == uid) return res.status(400).json({ error: 'Cannot message yourself' });
+
+    const target = await db.prepare('SELECT id, name FROM users WHERE id = ?').get(userId);
+    if (!target) return res.status(404).json({ error: 'User not found' });
+
+    const p1 = Math.min(uid, target.id);
+    const p2 = Math.max(uid, target.id);
+    let conv = await db.prepare('SELECT * FROM conversations WHERE participant1_id = ? AND participant2_id = ?').get(p1, p2);
+    if (!conv) {
+        const result = await db.prepare('INSERT INTO conversations (participant1_id, participant2_id) VALUES (?, ?)').run(p1, p2);
+        conv = await db.prepare('SELECT * FROM conversations WHERE id = ?').get(result.lastInsertRowid);
+    }
+    res.json(conv);
+});
+
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });

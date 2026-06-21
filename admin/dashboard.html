@@ -49,8 +49,10 @@
                     <span class="badge">3</span>
                 </div>
                 <div class="notif">
-                    <i class="fas fa-envelope"></i>
-                    <span class="badge">5</span>
+                    <a href="../user/conversation.html" style="color:inherit;text-decoration:none;">
+                        <i class="fas fa-envelope"></i>
+                        <span class="badge" id="adminMsgBadge" style="display:none;">0</span>
+                    </a>
                 </div>
                 <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Admin" class="admin-avatar">
                 <span id="adminName" class="ms-2 fw500" style="font-size: 0.9rem;">Admin</span>
@@ -161,6 +163,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script src="../js/script.js"></script>
     <script>
+        function loadMsgCount() {
+            $.get(API + '/api/conversations/unread/count').done(function (res) {
+                var badge = $('#adminMsgBadge');
+                if (res.count > 0) { badge.text(res.count).show(); }
+                else { badge.hide(); }
+            });
+        }
+
         function loadAdminData() {
             $.get(API + '/api/users', function (users) {
                 $('#totalUsers').text(users.length);
@@ -210,6 +220,7 @@
             if (user.role !== 'admin') { window.location.href = '/pages/login.html'; return; }
             $('#adminName').text(user.name);
             loadAdminData();
+            loadMsgCount();
         }).fail(function () {
             window.location.href = '/pages/login.html';
         });

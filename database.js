@@ -396,6 +396,82 @@ async function initDb() {
         );
     }
 
+    // ===== MESSAGES / CONVERSATIONS =====
+    if (pg) {
+        await db.exec(`
+            CREATE TABLE IF NOT EXISTS conversations (
+                id SERIAL PRIMARY KEY,
+                participant1_id INTEGER NOT NULL REFERENCES users(id),
+                participant2_id INTEGER NOT NULL REFERENCES users(id),
+                created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+                UNIQUE(participant1_id, participant2_id)
+            );
+            CREATE TABLE IF NOT EXISTS messages (
+                id SERIAL PRIMARY KEY,
+                conversation_id INTEGER NOT NULL REFERENCES conversations(id),
+                sender_id INTEGER NOT NULL REFERENCES users(id),
+                content TEXT,
+                image TEXT,
+                is_read INTEGER NOT NULL DEFAULT 0,
+                created_at TIMESTAMP NOT NULL DEFAULT NOW()
+            );
+        `);
+    } else {
+        db.exec(`
+            CREATE TABLE IF NOT EXISTS conversations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                participant1_id INTEGER NOT NULL,
+                participant2_id INTEGER NOT NULL,
+                created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                UNIQUE(participant1_id, participant2_id),
+                FOREIGN KEY (participant1_id) REFERENCES users(id),
+                FOREIGN KEY (participant2_id) REFERENCES users(id)
+            );
+            CREATE TABLE IF NOT EXISTS messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                conversation_id INTEGER NOT NULL,
+                sender_id INTEGER NOT NULL,
+                content TEXT,
+                image TEXT,
+                is_read INTEGER NOT NULL DEFAULT 0,
+                created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                FOREIGN KEY (conversation_id) REFERENCES conversations(id),
+                FOREIGN KEY (sender_id) REFERENCES users(id)
+            );
+        `);
+    }
+
+    // ===== MIGRATION: add image column to messages =====
+    try {
+        const msgCols = await db.prepare("PRAGMA table_info('messages')").all();
+        if (!msgCols.find(col => col.name === 'image')) {
+            db.exec("ALTER TABLE messages ADD COLUMN image TEXT");
+            console.log('Migrated: added image column to messages table');
+        }
+    } catch (e) {
+        console.log('Migration check for messages.image failed:', e.message);
+    }
+
+    // ===== MIGRATION: add last_seen column to users =====
+    try {
+        if (pg) {
+            await db.exec(`
+                ALTER TABLE users ADD COLUMN IF NOT EXISTS last_seen TIMESTAMP
+            `);
+        } else {
+            const userCols = await db.prepare("PRAGMA table_info('users')").all();
+            if (!userCols.find(col => col.name === 'last_seen')) {
+                db.exec("ALTER TABLE users ADD COLUMN last_seen TEXT");
+                console.log('Migrated: added last_seen column to users table');
+            }
+            // Initialize last_seen for existing users who have NULL
+            db.exec("UPDATE users SET last_seen = created_at WHERE last_seen IS NULL");
+            console.log('Initialized last_seen for existing users');
+        }
+    } catch (e) {
+        console.log('Migration check for users.last_seen failed:', e.message);
+    }
+
     console.log('Database initialized successfully');
 }
 
