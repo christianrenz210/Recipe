@@ -252,7 +252,7 @@ app.post('/api/users/:id/follow', requireAuth, async (req, res) => {
         res.json({ ok: true, following });
     } catch (e) {
         console.error('Follow error:', e);
-        res.status(500).json({ error: 'Failed to follow' });
+        res.status(500).json({ error: 'Failed to follow', detail: e.message });
     }
 });
 
@@ -542,10 +542,11 @@ app.use((err, req, res, next) => {
 (async () => {
     try {
         await initDb();
+        app.listen(PORT, () => {
+            console.log(`RecipeShare server running at http://localhost:${PORT}`);
+        });
     } catch (err) {
         console.error('initDb failed:', err);
+        process.exit(1);
     }
-    app.listen(PORT, () => {
-        console.log(`RecipeShare server running at http://localhost:${PORT}`);
-    });
 })();
