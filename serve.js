@@ -32,8 +32,6 @@ const PORT = process.env.PORT || 3000;
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-initDb().catch(console.error);
-
 passport.use(new GoogleStrategy({
     clientID: config.google.clientID,
     clientSecret: config.google.clientSecret
@@ -243,6 +241,7 @@ app.get('/api/users/suggested', requireAuth, async (req, res) => {
 app.post('/api/users/:id/follow', requireAuth, async (req, res) => {
     const db = getDb();
     const targetId = parseInt(req.params.id);
+    if (isNaN(targetId) || targetId < 1) return res.status(400).json({ error: 'Invalid user ID' });
     if (targetId === req.session.user.id) return res.status(400).json({ error: 'Cannot follow yourself' });
     const target = await db.prepare('SELECT id FROM users WHERE id = ?').get(targetId);
     if (!target) return res.status(404).json({ error: 'User not found' });
@@ -259,16 +258,26 @@ app.post('/api/users/:id/follow', requireAuth, async (req, res) => {
 
 app.post('/api/users/:id/unfollow', requireAuth, async (req, res) => {
     const db = getDb();
-    await db.prepare('DELETE FROM follows WHERE follower_id = ? AND following_id = ?').run(req.session.user.id, req.params.id);
-    const following = (await db.prepare('SELECT COUNT(*) as c FROM follows WHERE follower_id = ?').get(req.session.user.id)).c;
-    res.json({ ok: true, following });
+    try {
+        await db.prepare('DELETE FROM follows WHERE follower_id = ? AND following_id = ?').run(req.session.user.id, req.params.id);
+        const following = (await db.prepare('SELECT COUNT(*) as c FROM follows WHERE follower_id = ?').get(req.session.user.id)).c;
+        res.json({ ok: true, following });
+    } catch (e) {
+        console.error('Unfollow error:', e);
+        res.status(500).json({ error: 'Failed to unfollow' });
+    }
 });
 
 app.post('/api/users/:id/remove-follower', requireAuth, async (req, res) => {
     const db = getDb();
-    await db.prepare('DELETE FROM follows WHERE follower_id = ? AND following_id = ?').run(req.params.id, req.session.user.id);
-    const followers = (await db.prepare('SELECT COUNT(*) as c FROM follows WHERE following_id = ?').get(req.session.user.id)).c;
-    res.json({ ok: true, followers });
+    try {
+        await db.prepare('DELETE FROM follows WHERE follower_id = ? AND following_id = ?').run(req.params.id, req.session.user.id);
+        const followers = (await db.prepare('SELECT COUNT(*) as c FROM follows WHERE following_id = ?').get(req.session.user.id)).c;
+        res.json({ ok: true, followers });
+    } catch (e) {
+        console.error('Remove-follower error:', e);
+        res.status(500).json({ error: 'Failed to remove follower' });
+    }
 });
 
 app.get('/api/users/:id/followers', async (req, res) => {
@@ -530,6 +539,13 @@ app.use((err, req, res, next) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`RecipeShare server running at http://localhost:${PORT}`);
-});
+(async () => {
+    try {
+        await initDb();
+    } catch (err) {
+        console.error('initDb failed:', err);
+    }
+    app.listen(PORT, () => {
+        console.log(`RecipeShare server running at http://localhost:${PORT}`);
+    });
+})();
