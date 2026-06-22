@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Messaging System - Work Summary</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+            background:#e8e8e8;
+            padding:40px;
+            color:#1a1a2e;
+        }
+        .page {
+            width:210mm;
+            min-height:297mm;
+            background:#fff;
+            margin:0 auto 40px;
+            padding:30mm 25mm 25mm;
+            box-shadow:0 4px 20px rgba(0,0,0,0.15);
+            border-radius:4px;
+            position:relative;
+            page-break-after:always;
+        }
+        .page:last-child { page-break-after:auto; }
+
+        .header {
+            text-align:center;
+            border-bottom:3px solid #1877f2;
+            padding-bottom:20px;
+            margin-bottom:28px;
+        }
+        .header h1 { font-size:26px; color:#1877f2; letter-spacing:1px; }
+        .header .date { font-size:13px; color:#65676b; margin-top:6px; }
+        .header .status-badge {
+            display:inline-block;
+            background:#fff3cd;
+            color:#856404;
+            padding:4px 16px;
+            border-radius:20px;
+            font-size:12px;
+            font-weight:600;
+            margin-top:8px;
+        }
+
+        h2 {
+            font-size:18px;
+            color:#1877f2;
+            margin:24px 0 12px;
+            padding-bottom:6px;
+            border-bottom:1px solid #e0e0e0;
+        }
+        h3 {
+            font-size:15px;
+            color:#1a1a2e;
+            margin:16px 0 8px;
+        }
+
+        .grid-2 {
+            display:flex;
+            gap:20px;
+            flex-wrap:wrap;
+        }
+        .grid-2 > div { flex:1; min-width:200px; }
+
+        ul { padding-left:20px; margin:6px 0; }
+        li { font-size:13px; line-height:1.7; color:#333; }
+
+        .tag {
+            display:inline-block;
+            padding:2px 10px;
+            border-radius:12px;
+            font-size:11px;
+            font-weight:600;
+            margin-right:4px;
+        }
+        .tag-green { background:#d4edda; color:#155724; }
+        .tag-blue { background:#cce5ff; color:#004085; }
+        .tag-yellow { background:#fff3cd; color:#856404; }
+        .tag-red { background:#f8d7da; color:#721c24; }
+
+        .section-box {
+            background:#f8f9fa;
+            border-left:4px solid #1877f2;
+            padding:12px 16px;
+            margin:10px 0;
+            border-radius:0 6px 6px 0;
+            font-size:13px;
+            line-height:1.6;
+        }
+        .section-box.warn { border-left-color:#ffc107; }
+        .section-box.done { border-left-color:#28a745; }
+
+        .file-path {
+            font-family:'Courier New',monospace;
+            font-size:12px;
+            background:#e9ecef;
+            padding:2px 6px;
+            border-radius:3px;
+            color:#555;
+        }
+
+        table {
+            width:100%;
+            border-collapse:collapse;
+            margin:8px 0;
+            font-size:13px;
+        }
+        th, td {
+            padding:8px 10px;
+            text-align:left;
+            border:1px solid #dee2e6;
+        }
+        th { background:#1877f2; color:#fff; font-weight:600; }
+        td { background:#fff; }
+        tr:nth-child(even) td { background:#f8f9fa; }
+
+        .todo-item {
+            display:flex;
+            align-items:flex-start;
+            gap:10px;
+            padding:6px 0;
+            font-size:13px;
+        }
+        .todo-item .check {
+            width:18px; height:18px;
+            border:2px solid #28a745;
+            border-radius:3px;
+            flex-shrink:0;
+            margin-top:1px;
+        }
+        .todo-item .check.done { background:#28a745; position:relative; }
+        .todo-item .check.done::after {
+            content:'\2713';
+            color:#fff;
+            font-size:12px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            line-height:1;
+        }
+        .todo-item .check.pending { border-color:#ffc107; }
+        .todo-item .label { color:#333; }
+        .todo-item .label.done { text-decoration:line-through; color:#999; }
+        .todo-item .label.pending { color:#856404; }
+
+        .footer {
+            position:absolute;
+            bottom:20mm;
+            left:25mm;
+            right:25mm;
+            text-align:center;
+            font-size:11px;
+            color:#999;
+            border-top:1px solid #eee;
+            padding-top:10px;
+        }
+
+        @media print {
+            body { background:#fff; padding:0; }
+            .page { box-shadow:none; border-radius:0; margin:0 auto; padding:20mm 20mm; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <div class="header">
+        <h1>RECIPESHARE — MESSAGING SYSTEM</h1>
+        <div class="date">Work Date: June 21, 2026 &bull; Status: <strong>In Progress</strong></div>
+        <div class="status-badge">&#9888; NOT FINISHED — Continue tomorrow</div>
+    </div>
+
+    <h2>Files Created / Modified</h2>
+    <table>
+        <tr><th>File</th><th>Status</th><th>What Changed</th></tr>
+        <tr><td><span class="file-path">user/conversation.html</span></td><td><span class="tag tag-green">NEW</span></td><td>Full Messenger page — sidebar, chat, composer, info panel, emoji picker, typing indicator, mobile responsive</td></tr>
+        <tr><td><span class="file-path">user/messages.html</span></td><td><span class="tag tag-green">NEW</span></td><td>Redirects to conversation.html</td></tr>
+        <tr><td><span class="file-path">serve.js</span></td><td><span class="tag tag-blue">MODIFIED</span></td><td>Added message APIs, typing endpoints, last_seen tracking, user search</td></tr>
+        <tr><td><span class="file-path">database.js</span></td><td><span class="tag tag-blue">MODIFIED</span></td><td>Added conversations/messages tables, migrations for image + last_seen columns</td></tr>
+        <tr><td><span class="file-path">user/dashboard.html</span></td><td><span class="tag tag-blue">MODIFIED</span></td><td>Added Message button on profiles, updateMsgCount()</td></tr>
+        <tr><td><span class="file-path">admin/dashboard.html</span></td><td><span class="tag tag-blue">MODIFIED</span></td><td>Dynamic message badge count</td></tr>
+    </table>
+
+    <h2>Backend API Endpoints</h2>
+    <table>
+        <tr><th>Method</th><th>Endpoint</th><th>Purpose</th></tr>
+        <tr><td>GET</td><td><span class="file-path">/api/conversations</span></td><td>List user's conversations with last_message, unread_count, other_last_seen</td></tr>
+        <tr><td>GET</td><td><span class="file-path">/api/conversations/unread/count</span></td><td>Global unread count</td></tr>
+        <tr><td>GET</td><td><span class="file-path">/api/conversations/:id/messages</span></td><td>Get messages (marks unread as read)</td></tr>
+        <tr><td>POST</td><td><span class="file-path">/api/conversations/:id/messages</span></td><td>Send text/image message (multipart via multer)</td></tr>
+        <tr><td>POST</td><td><span class="file-path">/api/conversations</span></td><td>Create or return existing conversation</td></tr>
+        <tr><td>GET</td><td><span class="file-path">/api/users/search</span></td><td>Search users by name/email (excludes current user)</td></tr>
+        <tr><td>GET</td><td><span class="file-path">/api/conversations/:id/typing</span></td><td>Check if other user is typing (1.2s timeout, no-cache)</td></tr>
+        <tr><td>POST</td><td><span class="file-path">/api/conversations/:id/typing</span></td><td>Signal that current user is typing</td></tr>
+    </table>
+
+    <h2>Database Schema</h2>
+    <div class="grid-2">
+        <div>
+            <h3>conversations</h3>
+            <div class="section-box">
+                <code>id</code> INTEGER PRIMARY KEY<br>
+                <code>participant1_id</code> INTEGER NOT NULL<br>
+                <code>participant2_id</code> INTEGER NOT NULL<br>
+                <code>created_at</code> TEXT DEFAULT datetime('now')<br>
+                <em>UNIQUE(participant1_id, participant2_id)</em>
+            </div>
+        </div>
+        <div>
+            <h3>messages</h3>
+            <div class="section-box">
+                <code>id</code> INTEGER PRIMARY KEY<br>
+                <code>conversation_id</code> INTEGER NOT NULL<br>
+                <code>sender_id</code> INTEGER NOT NULL<br>
+                <code>content</code> TEXT (nullable)<br>
+                <code>image</code> TEXT (nullable)<br>
+                <code>is_read</code> INTEGER DEFAULT 0<br>
+                <code>created_at</code> TEXT DEFAULT datetime('now')
+            </div>
+        </div>
+    </div>
+
+    <h2>Frontend Features — Done</h2>
+    <div class="todo-item"><span class="check done"></span><span class="label done">Messenger layout — sidebar + chat + info panel, full viewport</span></div>
+    <div class="todo-item"><span class="check done"></span><span class="label done">Dark/light theme with CSS variables, toggle button, localStorage, prefers-color-scheme</span></div>
+    <div class="todo-item"><span class="check done"></span><span class="label done">Conversation list with search, filters (All/Unread), unread badges</span></div>
+    <div class="todo-item"><span class="check done"></span><span class="label done">Message sending — text + image upload with preview</span></div>
+    <div class="todo-item"><span class="check done"></span><span class="label done">Image messages — display with click-to-open full size</span></div>
+    <div class="todo-item"><span class="check done"></span><span class="label done">Read receipts — single checkmark (unread) & double checkmark (read, blue accent)</span></div>
+    <div class="todo-item"><span class="check done"></span><span class="label done">Emoji picker — 400+ emojis grid, inserts at cursor, click-away to close</span></div>
+    <div class="todo-item"><span class="check done"></span><span class="label done">Typing indicator — animated 3-dot bouncing bubble + "Typing..." header status</span></div>
+    <div class="todo-item"><span class="check done"></span><span class="label done">Online/last-seen status — "Active now / Xm ago / Xh ago / yesterday / Last seen [date]"</span></div>
+    <div class="todo-item"><span class="check done"></span><span class="label done">Green online dot on avatar (hides when offline)</span></div>
+    <div class="todo-item"><span class="check done"></span><span class="label done">New message modal — user search, click to start conversation</span></div>
+    <div class="todo-item"><span class="check done"></span><span class="label done">Message button on user profiles (dashboard + suggested chefs)</span></div>
+    <div class="todo-item"><span class="check done"></span><span class="label done">Mobile responsive — sidebar/info slide drawers, 3-button composer, 100dvh, safe-area</span></div>
+    <div class="todo-item"><span class="check done"></span><span class="label done">Fixed jQuery selectors — all missing $() wrappers</span></div>
+    <div class="todo-item"><span class="check done"></span><span class="label done">Fixed toggleTheme() and toggleSection() bugs</span></div>
+    <div class="todo-item"><span class="check done"></span><span class="label done">Fixed UTC timestamp parsing (SQLite datetime → local time display)</span></div>
+</div>
+
+<div class="page">
+    <div class="header">
+        <h1>RECIPESHARE — MESSAGING SYSTEM</h1>
+        <div class="date">TODO &amp; NEXT STEPS — June 22, 2026</div>
+    </div>
+
+    <h2>Still To Do (Next Session)</h2>
+
+    <div class="todo-item"><span class="check pending"></span><span class="label pending">Fix 401 Unauthorized on POST requests via Cloudflare Tunnel (session cookie domain mismatch)</span></div>
+    <div class="todo-item"><span class="check pending"></span><span class="label pending">Add WebSockets (Socket.io) instead of polling for real-time typing/messages</span></div>
+    <div class="todo-item"><span class="check pending"></span><span class="label pending">Message reactions (React button — emoji picker on message hover)</span></div>
+    <div class="todo-item"><span class="check pending"></span><span class="label pending">Message reply (thread/quote reply)</span></div>
+    <div class="todo-item"><span class="check pending"></span><span class="label pending">Message editing &amp; deletion (PUT/DELETE endpoints + UI)</span></div>
+    <div class="todo-item"><span class="check pending"></span><span class="label pending">Image upload — fix NOT NULL constraint error when sending text-only messages</span></div>
+    <div class="todo-item"><span class="check pending"></span><span class="label pending">Notification creation on new message (INSERT INTO notifications table)</span></div>
+    <div class="todo-item"><span class="check pending"></span><span class="label pending">Message pagination (limit/offset for large conversations)</span></div>
+    <div class="todo-item"><span class="check pending"></span><span class="label pending">GIF integration (Tenor/GIPHY API — needs API key)</span></div>
+    <div class="todo-item"><span class="check pending"></span><span class="label pending">Voice call / Video call button handlers</span></div>
+    <div class="todo-item"><span class="check pending"></span><span class="label pending">Group chats (schema currently only supports 2-person)</span></div>
+    <div class="todo-item"><span class="check pending"></span><span class="label pending">Postgres migration for image column on messages table</span></div>
+    <div class="todo-item"><span class="check pending"></span><span class="label pending">XSS sanitization for message content before .html() insertion</span></div>
+    <div class="todo-item"><span class="check pending"></span><span class="label pending">Search within conversation (info panel search button)</span></div>
+    <div class="todo-item"><span class="check pending"></span><span class="label pending">Make messages.html show conversation list instead of just redirecting</span></div>
+
+    <h2>Known Bugs</h2>
+    <div class="section-box warn">
+        <strong>&#9888; 401 on POST via Cloudflare Tunnel</strong><br>
+        POST requests to API return 401 when accessed via Cloudflare tunnel URL.
+        The session cookie is tied to localhost domain. Fix: ensure cookie domain handling works with tunnel, or login through tunnel URL.
+    </div>
+    <div class="section-box warn">
+        <strong>&#9888; NOT NULL constraint on messages.content</strong><br>
+        Sending a message with only text fails with <code>SQLITE_CONSTRAINT_NOTNULL</code>.
+        The INSERT tries to insert empty string instead of NULL for content.
+    </div>
+    <div class="section-box warn">
+        <strong>&#9888; Image upload missing Postgres migration</strong><br>
+        The <code>image</code> column migration for <code>messages</code> table only handles SQLite (PRAGMA). Postgres path is missing.
+    </div>
+
+    <h2>Tech Stack</h2>
+    <div class="section-box">
+        <strong>Backend:</strong> Node.js, Express, better-sqlite3, Passport (Google OAuth), multer<br>
+        <strong>Frontend:</strong> Plain HTML/CSS/JS, jQuery 3.7.1, Bootstrap 5.3, Font Awesome 6.5<br>
+        <strong>Database:</strong> SQLite (primary), with Postgres support (pg)<br>
+        <strong>Real-time:</strong> Polling (no WebSocket yet)
+    </div>
+
+    <h2>User Accounts (Dev)</h2>
+    <table>
+        <tr><th>ID</th><th>Name</th><th>Email</th></tr>
+        <tr><td>1</td><td>Admin User</td><td>admin@example.com</td></tr>
+        <tr><td>3</td><td>Renz Ledesma</td><td>renz@example.com</td></tr>
+        <tr><td>4</td><td>Christian Renz Ledesma</td><td>christianrenzledesma210@gmail.com</td></tr>
+    </table>
+
+    <h2>Key Config</h2>
+    <div class="section-box">
+        <strong>Server:</strong> <code>http://localhost:3000</code><br>
+        <strong>Run:</strong> <code>node serve.js</code><br>
+        <strong>Message image limit:</strong> 10MB (vs 5MB for recipe images)<br>
+        <strong>Theme persistence:</strong> localStorage key <code>msgTheme</code><br>
+        <strong>Polling intervals:</strong> messages/conversations every 3s, typing every 500ms<br>
+        <strong>Typing timeout:</strong> 1.2s on server, 800ms throttle on client
+    </div>
+
+    <div class="footer">
+        RecipeShare Messaging System &bull; Work Summary &bull; June 21, 2026 &bull; Page 2/2
+    </div>
+</div>
+
+</body>
+</html>

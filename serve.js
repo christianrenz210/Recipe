@@ -30,7 +30,15 @@ const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Static files - only serve needed directories (never serve root to avoid source code exposure)
+app.use('/css', express.static(path.join(__dirname, 'css')));
+app.use('/js', express.static(path.join(__dirname, 'js')));
+app.use('/pages', express.static(path.join(__dirname, 'pages')));
+app.use('/user', express.static(path.join(__dirname, 'user')));
+app.use('/admin', express.static(path.join(__dirname, 'admin')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+app.get('/printsummary.html', (req, res) => res.sendFile(path.join(__dirname, 'printsummary.html')));
 
 passport.use(new GoogleStrategy({
     clientID: config.google.clientID,
@@ -81,7 +89,6 @@ app.use((req, res, next) => {
 app.set('trust proxy', 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname)));
 
 app.use(session({
     secret: 'recipeshare-secret-key-2026',
