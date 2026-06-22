@@ -216,6 +216,17 @@ async function initDb() {
         } catch (e) {
             console.log('Migration check for notifications.actor_id failed:', e.message);
         }
+        try {
+            const col = await db.prepare(
+                "SELECT column_name FROM information_schema.columns WHERE table_name = 'notifications' AND column_name = 'title'"
+            ).get();
+            if (col) {
+                await db.exec("ALTER TABLE notifications DROP COLUMN title");
+                console.log('Migrated: dropped stray title column from notifications table (pg)');
+            }
+        } catch (e) {
+            console.log('Migration check for notifications.title failed:', e.message);
+        }
     } else {
         db.exec(`
             CREATE TABLE IF NOT EXISTS users (
