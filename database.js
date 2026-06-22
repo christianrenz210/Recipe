@@ -205,6 +205,17 @@ async function initDb() {
         } catch (e) {
             console.log('Migration check for notifications.link failed:', e.message);
         }
+        try {
+            const col = await db.prepare(
+                "SELECT column_name FROM information_schema.columns WHERE table_name = 'notifications' AND column_name = 'actor_id'"
+            ).get();
+            if (!col) {
+                await db.exec("ALTER TABLE notifications ADD COLUMN actor_id INTEGER REFERENCES users(id)");
+                console.log('Migrated: added actor_id column to notifications table (pg)');
+            }
+        } catch (e) {
+            console.log('Migration check for notifications.actor_id failed:', e.message);
+        }
     } else {
         db.exec(`
             CREATE TABLE IF NOT EXISTS users (
