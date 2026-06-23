@@ -114,9 +114,10 @@
         .message-row.sent { justify-content:flex-end; }
         .message-row.received { justify-content:flex-start; }
         .message-bubble { max-width:65%; padding:8px 14px; font-size:14px; line-height:1.4; word-wrap:break-word; }
-        .message-row.sent .message-bubble { background:var(--bg-bubble-sent); color:var(--text-primary); border-radius:18px 18px 4px 18px; }
+        .message-row.sent .message-bubble { background:var(--accent); color:#fff; border-radius:18px 18px 4px 18px; }
+        .message-row.sent .message-bubble .msg-time { color:rgba(255,255,255,0.7); }
         .message-row.received .message-bubble { background:var(--bg-bubble-recv); color:var(--text-primary); border-radius:18px 18px 18px 4px; }
-        .message-bubble .msg-time { font-size:10px; color:var(--text-secondary); margin-top:2px; text-align:right; }
+        .message-bubble .msg-time { font-size:10px; margin-top:2px; text-align:right; }
         .typing-indicator { display:none; justify-content:flex-start; padding:0 40px 12px; }
         .typing-indicator.show { display:flex; }
         .typing-indicator .typing-bubble { background:var(--bg-bubble-recv); border-radius:18px 18px 18px 4px; padding:12px 16px; display:flex; align-items:center; gap:4px; }
@@ -452,7 +453,7 @@ function loadMessages(){
             var mine=m.sender_id===currentUser.id;
             var imgHtml=m.image?'<img src="'+m.image+'" class="msg-img" onclick="window.open(this.src)">':'';
             var contentHtml=m.content||'';
-            var readIcon=mine?(m.is_read?'<i class="fas fa-check-double" style="font-size:10px;margin-left:2px;color:var(--accent);"></i>':'<i class="fas fa-check" style="font-size:10px;margin-left:2px;"></i>'):'';
+            var readIcon=mine?(m.is_read?'<i class="fas fa-check-double" style="font-size:10px;margin-left:2px;color:rgba(255,255,255,0.8);"></i>':'<i class="fas fa-check" style="font-size:10px;margin-left:2px;color:rgba(255,255,255,0.8);"></i>'):'';
             html+='<div class="message-row '+(mine?'sent':'received')+'">'+
                 '<div class="hover-actions"><button title="React"><i class="far fa-smile"></i></button><button title="Reply"><i class="fas fa-reply"></i></button><button title="More"><i class="fas fa-ellipsis-h"></i></button></div>'+
                 '<div class="message-bubble">'+imgHtml+contentHtml+'<div class="msg-time">'+formatMsgTime(m.created_at)+readIcon+'</div></div></div>';
