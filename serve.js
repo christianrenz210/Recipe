@@ -253,7 +253,11 @@ app.post('/api/users/:id/follow', requireAuth, async (req, res) => {
     const target = await db.prepare('SELECT id FROM users WHERE id = ?').get(targetId);
     if (!target) return res.status(404).json({ error: 'User not found' });
     try {
-        await db.prepare('INSERT OR IGNORE INTO follows (follower_id, following_id) VALUES (?, ?)').run(req.session.user.id, targetId);
+        const existingFollow = await db.prepare('SELECT id FROM follows WHERE follower_id = ? AND following_id = ?').get(req.session.user.id, targetId);
+        if (existingFollow) {
+            return res.json({ ok: true, alreadyFollowing: true, following: (await db.prepare('SELECT COUNT(*) as c FROM follows WHERE follower_id = ?').get(req.session.user.id)).c });
+        }
+        await db.prepare('INSERT INTO follows (follower_id, following_id) VALUES (?, ?)').run(req.session.user.id, targetId);
         await db.prepare('INSERT INTO notifications (user_id, type, actor_id, link) VALUES (?, ?, ?, ?)').run(targetId, 'follow', req.session.user.id, 'viewUserProfile(' + req.session.user.id + ')');
         const following = (await db.prepare('SELECT COUNT(*) as c FROM follows WHERE follower_id = ?').get(req.session.user.id)).c;
         res.json({ ok: true, following });
