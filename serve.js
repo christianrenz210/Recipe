@@ -544,7 +544,11 @@ function trackSeen(req) {
     try {
         const db = getDb();
         const uid = req.session.user.id;
-        db.prepare("UPDATE users SET last_seen = datetime('now') WHERE id = ?").run(uid);
+        if (db.type === 'pg') {
+            db.prepare("UPDATE users SET last_seen = NOW() WHERE id = ?").run(uid);
+        } else {
+            db.prepare("UPDATE users SET last_seen = datetime('now') WHERE id = ?").run(uid);
+        }
     } catch (e) { /* silently fail */ }
 }
 

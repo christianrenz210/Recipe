@@ -238,6 +238,17 @@ async function initDb() {
         } catch (e) {
             console.log('Migration check for notifications.message failed:', e.message);
         }
+        try {
+            const def = await db.prepare(
+                "SELECT column_default FROM information_schema.columns WHERE table_name = 'notifications' AND column_name = 'created_at' AND column_default LIKE '%datetime%'"
+            ).get();
+            if (def) {
+                await db.exec("ALTER TABLE notifications ALTER COLUMN created_at SET DEFAULT NOW()");
+                console.log('Migrated: fixed created_at default in notifications table (pg)');
+            }
+        } catch (e) {
+            console.log('Migration check for notifications.created_at default failed:', e.message);
+        }
     } else {
         db.exec(`
             CREATE TABLE IF NOT EXISTS users (
