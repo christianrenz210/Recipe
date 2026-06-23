@@ -375,7 +375,7 @@
 <script>
 var currentUser = null, conversationId = null, otherUserId = null, otherLastSeen = '', otherTyping = false, otherTypingThrottle = false, pollInterval = null, conversations = [], currentFilter = 'all';
 
-function parseUTC(d){if(!d)return null;return new Date(d.replace(' ','T')+'Z');}
+function parseUTC(d){if(!d)return null;if(d.includes('T'))return new Date(d);return new Date(d.replace(' ','T')+'Z');}
 function formatTime(d) { if(!d)return''; var n=parseUTC(d),t=(new Date()-n)/1e3; if(!n)return''; if(t<60)return'now'; if(t<3600)return Math.floor(t/60)+'m'; if(t<86400)return Math.floor(t/3600)+'h'; if(t<172800)return'yesterday'; return n.toLocaleDateString(); }
 function formatMsgTime(d) { if(!d)return''; var n=parseUTC(d); if(!n)return''; return n.toDateString()===new Date().toDateString()?n.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):n.toLocaleDateString([],{month:'short',day:'numeric'}); }
 function formatStatus(ls){
@@ -443,10 +443,10 @@ function loadMessages(){
         if(!msgs.length){area.html('<div class="empty-chat" style="display:flex;"><i class="fas fa-comment-dots"></i><h4>No messages yet</h4><p>Say hello to start the conversation.</p></div>');return;}
         var html='',lastDate='';
         msgs.forEach(function(m){
-            var md=new Date(m.created_at).toLocaleDateString();
+            var md=parseUTC(m.created_at).toLocaleDateString();
             if(md!==lastDate){
                 lastDate=md;
-                var lb=new Date(m.created_at).toDateString()===new Date().toDateString()?'Today':new Date(m.created_at).toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});
+                var lb=parseUTC(m.created_at).toDateString()===new Date().toDateString()?'Today':parseUTC(m.created_at).toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});
                 html+='<div class="date-divider"><span>'+lb+'</span></div>';
             }
             var mine=m.sender_id===currentUser.id;
